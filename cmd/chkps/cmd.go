@@ -10,7 +10,7 @@ var Cmd = &cobra.Command{
 	Use:     "chkps",
 	Short:   "pgtools chkps service",
 	Long:    "pgtools service",
-	Example: `pgtools chkps -U postgres -M 127.0.0.1 -P 5432 -D postgres`,
+	Example: `pgtools chkps -u root -w 123456 -m 192.168.1.140 -p 22`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		srv := NewServer()
 		if err := srv.Start(); err != nil {
@@ -22,19 +22,19 @@ var Cmd = &cobra.Command{
 
 // 服务结构体
 type Server struct {
-	PgToolsService *protocol.PgToolsService
+	ChkpsService *protocol.ChkpsService
 }
 
 // 服务结构体初始化函数
 func NewServer() *Server {
 	return &Server{
-		PgToolsService: protocol.NewPgToolsService(),
+		ChkpsService: protocol.NewChkpsService(),
 	}
 }
 
 // Server服务启动方法
 func (s *Server) Start() error {
-	if err := s.PgToolsService.Start(); err != nil {
+	if err := s.ChkpsService.Start(); err != nil {
 		return err
 	}
 	return nil
@@ -42,7 +42,7 @@ func (s *Server) Start() error {
 
 // Server服务停止方法
 func (s *Server) Stop() error {
-	if err := s.PgToolsService.Stop(); err != nil {
+	if err := s.ChkpsService.Stop(); err != nil {
 		return err
 	}
 	return nil

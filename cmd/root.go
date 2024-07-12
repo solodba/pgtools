@@ -27,7 +27,7 @@ var (
 
 // 根命令
 var RootCmd = &cobra.Command{
-	Use:     "pgtools [chkps|repairps]",
+	Use:     "pgtools [chkps|chkms]",
 	Short:   "pgtools service",
 	Long:    "pgtools service",
 	Example: "pgtools -v",
@@ -52,6 +52,7 @@ func LoadConfigFromCmd() {
 	conf.Conf.CmdConf.Syspwd = SysPwd
 	conf.Conf.CmdConf.Syshost = SysHost
 	conf.Conf.CmdConf.Sysport = SysPort
+	conf.Conf.CmdConf.PgType = PgType
 }
 
 // 初始化函数

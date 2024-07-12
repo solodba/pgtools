@@ -34,10 +34,10 @@ type PostgreSQL struct {
 // PostgreSQL结构体构造函数
 func NewDefaultPostgreSQL() *PostgreSQL {
 	return &PostgreSQL{
-		Username: "root",
+		Username: "postgres",
 		Password: "123456",
 		Host:     "127.0.0.1",
-		Port:     3306,
+		Port:     5432,
 		DB:       "test",
 	}
 }
@@ -48,6 +48,7 @@ type CmdConf struct {
 	Syspwd  string
 	Syshost string
 	Sysport int32
+	PgType  string
 }
 
 // CmdConf结构体构造函数
