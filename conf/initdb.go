@@ -11,7 +11,7 @@ import (
 
 // 创建postgresql连接池
 func (m *PostgreSQL) GetConnPool() (*sql.DB, error) {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=verify-full",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		m.Username, m.Password, m.Host, m.Port, m.DB)
 	db, err := sql.Open("postgres", dsn)
 	if err != nil {
