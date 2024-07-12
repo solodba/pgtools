@@ -18,8 +18,8 @@ func (i *impl) CheckPostgresqlProcess(context.Context) error {
 		return err
 	}
 	if processNum < 6 {
-		return fmt.Errorf("[%s]节点postgresql进程异常", i.cmdConf.Syshost)
+		return fmt.Errorf("[%s]节点postgresql进程数目小于6, 进程状态异常", i.cmdConf.Syshost)
 	}
-	fmt.Printf("[%s]节点postgresql进程正常\n", i.cmdConf.Syshost)
+	fmt.Printf("[%s]节点postgresql进程数目大于等于6, 进程状态正常\n", i.cmdConf.Syshost)
 	return nil
 }
