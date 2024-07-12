@@ -22,6 +22,7 @@ var (
 	PgHost      string
 	PgDb        string
 	PgPort      int32
+	PgType      string
 )
 
 // 根命令
@@ -80,4 +81,5 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&PgHost, "pghost", "M", "127.0.0.1", "connect postgresql host")
 	RootCmd.PersistentFlags().Int32VarP(&PgPort, "pgport", "P", 5432, "connect postgresql port")
 	RootCmd.PersistentFlags().StringVarP(&PgDb, "pgdb", "D", "postgres", "connect postgresql database")
+	RootCmd.PersistentFlags().StringVarP(&PgType, "pgtype", "T", "pg13", "connect postgresql database type")
 }
