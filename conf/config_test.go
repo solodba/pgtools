@@ -35,3 +35,16 @@ func TestGetDbConn(t *testing.T) {
 		t.Log(clientAddr, state, syncState)
 	}
 }
+
+func TestSSHConn(t *testing.T) {
+	conf.Conf = conf.NewDefaultConfig()
+	conf.Conf.CmdConf.Sysuser = "root"
+	conf.Conf.CmdConf.Syspwd = "Root_123"
+	conf.Conf.CmdConf.Syshost = "192.168.1.140"
+	conf.Conf.CmdConf.Sysport = 22
+	result, err := conf.Conf.CmdConf.RunShell("hostname")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(result)
+}
