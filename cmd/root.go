@@ -5,6 +5,7 @@ import (
 	"github.com/solodba/mcube/logger"
 	"github.com/solodba/mcube/version"
 	_ "github.com/solodba/pgtools/apps/all"
+	"github.com/solodba/pgtools/cmd/chkms"
 	"github.com/solodba/pgtools/cmd/chkps"
 	"github.com/solodba/pgtools/conf"
 	"github.com/spf13/cobra"
@@ -65,7 +66,7 @@ func Initial() {
 // 执行函数
 func Execute() {
 	cobra.OnInitialize(Initial)
-	RootCmd.AddCommand(chkps.Cmd)
+	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd)
 	err := RootCmd.Execute()
 	cobra.CheckErr(err)
 }

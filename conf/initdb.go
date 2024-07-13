@@ -1,7 +1,6 @@
 package conf
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"time"
@@ -13,10 +12,10 @@ import (
 func (m *PostgreSQL) GetConnPool() (*sql.DB, error) {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		m.Username, m.Password, m.Host, m.Port, m.DB)
-	db, err := sql.Open("postgres", dsn)
-	if err != nil {
-		return nil, fmt.Errorf("conn postgresql<%s> error, reason: %s", dsn, err.Error())
-	}
+	db, _ := sql.Open("postgres", dsn)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("conn postgresql<%s> error, reason: %s", dsn, err.Error())
+	// }
 	db.SetMaxOpenConns(int(m.MaxOpenConn))
 	db.SetMaxIdleConns(int(m.MaxIdleConn))
 	if m.MaxLifeTime != 0 {
@@ -25,12 +24,12 @@ func (m *PostgreSQL) GetConnPool() (*sql.DB, error) {
 	if m.MaxIdleTime != 0 {
 		db.SetConnMaxIdleTime(time.Second * time.Duration(m.MaxIdleTime))
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
-	defer cancel()
-	err = db.PingContext(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("ping postgresql<%s> error, reason: %s", dsn, err.Error())
-	}
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	// defer cancel()
+	// err = db.PingContext(ctx)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("ping postgresql<%s> error, reason: %s", dsn, err.Error())
+	// }
 	return db, nil
 }
 

@@ -3,16 +3,22 @@ package impl
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 func (i *impl) GetPostgresqlPrimaryStandby(ctx context.Context) error {
-	sql := `select count(*) from pg_stat_replication`
+	sql := `select pg_is_in_recovery();`
+	var pgRole string
 	row := i.db.QueryRowContext(ctx, sql)
-	var recordCount int
-	err := row.Scan(&recordCount)
+	err := row.Scan(&pgRole)
 	if err != nil {
 		return err
 	}
-	fmt.Println(recordCount)
+	if strings.Trim(pgRole, "\n") == "false" {
+		fmt.Printf("当前节点为主节点\n")
+	}
+	if strings.Trim(pgRole, "\n") == "true" {
+		fmt.Printf("当前节点为备节点\n")
+	}
 	return nil
 }
