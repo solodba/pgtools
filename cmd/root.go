@@ -8,6 +8,8 @@ import (
 	"github.com/solodba/pgtools/cmd/chklog"
 	"github.com/solodba/pgtools/cmd/chkms"
 	"github.com/solodba/pgtools/cmd/chkps"
+	"github.com/solodba/pgtools/cmd/chtab"
+	"github.com/solodba/pgtools/cmd/repairms"
 	"github.com/solodba/pgtools/conf"
 	"github.com/spf13/cobra"
 )
@@ -25,6 +27,8 @@ var (
 	PgDb        string
 	PgPort      int32
 	PgType      string
+	PrimaryIp   string
+	PrimaryPort int32
 )
 
 // 根命令
@@ -55,6 +59,8 @@ func LoadConfigFromCmd() {
 	conf.Conf.CmdConf.Syshost = SysHost
 	conf.Conf.CmdConf.Sysport = SysPort
 	conf.Conf.CmdConf.PgType = PgType
+	conf.Conf.CmdConf.PrimaryIp = PrimaryIp
+	conf.Conf.CmdConf.PrimaryPort = PrimaryPort
 }
 
 // 初始化函数
@@ -67,7 +73,7 @@ func Initial() {
 // 执行函数
 func Execute() {
 	cobra.OnInitialize(Initial)
-	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd, chklog.Cmd)
+	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd, chklog.Cmd, chtab.Cmd, repairms.Cmd)
 	err := RootCmd.Execute()
 	cobra.CheckErr(err)
 }
@@ -85,4 +91,6 @@ func init() {
 	RootCmd.PersistentFlags().Int32VarP(&PgPort, "pgport", "P", 5432, "connect postgresql port")
 	RootCmd.PersistentFlags().StringVarP(&PgDb, "pgdb", "D", "postgres", "connect postgresql database")
 	RootCmd.PersistentFlags().StringVarP(&PgType, "pgtype", "T", "pg13", "connect postgresql database type")
+	RootCmd.PersistentFlags().StringVarP(&PrimaryIp, "primaryip", "a", "127.0.0.1", "connect primary postgresql database ip")
+	RootCmd.PersistentFlags().Int32VarP(&PrimaryPort, "priamryport", "b", 5432, "connect primary postgresql database port")
 }

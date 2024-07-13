@@ -44,11 +44,13 @@ func NewDefaultPostgreSQL() *PostgreSQL {
 
 // CmdConf结构体
 type CmdConf struct {
-	Sysuser string
-	Syspwd  string
-	Syshost string
-	Sysport int32
-	PgType  string
+	Sysuser     string
+	Syspwd      string
+	Syshost     string
+	Sysport     int32
+	PgType      string
+	PrimaryIp   string
+	PrimaryPort int32
 }
 
 // CmdConf结构体构造函数
