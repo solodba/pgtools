@@ -1,4 +1,4 @@
-package repairms
+package pgrewind
 
 import (
 	"github.com/solodba/pgtools/protocol"
@@ -7,10 +7,10 @@ import (
 
 // 项目启动子命令
 var Cmd = &cobra.Command{
-	Use:     "repairms",
-	Short:   "pgtools repairms service",
+	Use:     "pgrewind",
+	Short:   "pgtools pgrewind service",
 	Long:    "pgtools service",
-	Example: `pgtools repairms -u root -w Root_123 -m 127.0.0.1 -p 22 -a 192.168.1.150 -b 5432`,
+	Example: `pgtools pgrewind -u root -w Root_123 -m 127.0.0.1 -p 22 -a 192.168.1.150 -b 5432`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		srv := NewServer()
 		if err := srv.Start(); err != nil {
@@ -22,19 +22,19 @@ var Cmd = &cobra.Command{
 
 // 服务结构体
 type Server struct {
-	RepairMsService *protocol.RepairMsService
+	PgrewindService *protocol.PgrewindService
 }
 
 // 服务结构体初始化函数
 func NewServer() *Server {
 	return &Server{
-		RepairMsService: protocol.NewRepairMsService(),
+		PgrewindService: protocol.NewPgrewindService(),
 	}
 }
 
 // Server服务启动方法
 func (s *Server) Start() error {
-	if err := s.RepairMsService.Start(); err != nil {
+	if err := s.PgrewindService.Start(); err != nil {
 		return err
 	}
 	return nil
@@ -42,7 +42,7 @@ func (s *Server) Start() error {
 
 // Server服务停止方法
 func (s *Server) Stop() error {
-	if err := s.RepairMsService.Stop(); err != nil {
+	if err := s.PgrewindService.Stop(); err != nil {
 		return err
 	}
 	return nil

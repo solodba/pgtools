@@ -9,6 +9,7 @@ import (
 	"github.com/solodba/pgtools/cmd/chkms"
 	"github.com/solodba/pgtools/cmd/chkps"
 	"github.com/solodba/pgtools/cmd/chtab"
+	"github.com/solodba/pgtools/cmd/pgrewind"
 	"github.com/solodba/pgtools/cmd/repairmka"
 	"github.com/solodba/pgtools/cmd/repairms"
 	"github.com/solodba/pgtools/cmd/repairska"
@@ -75,7 +76,7 @@ func Initial() {
 // 执行函数
 func Execute() {
 	cobra.OnInitialize(Initial)
-	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd, chklog.Cmd, chtab.Cmd, repairms.Cmd, repairmka.Cmd, repairska.Cmd)
+	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd, chklog.Cmd, chtab.Cmd, repairms.Cmd, repairmka.Cmd, repairska.Cmd, pgrewind.Cmd)
 	err := RootCmd.Execute()
 	cobra.CheckErr(err)
 }
