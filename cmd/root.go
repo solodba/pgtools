@@ -36,7 +36,7 @@ var (
 
 // 根命令
 var RootCmd = &cobra.Command{
-	Use:     "pgtools [chkps|chkms|chklog|chktab|repairms|repairska|repairmka]",
+	Use:     "pgtools [chkps|chkms|chklog|chktab|repairms|repairska|repairmka|pgrewind]",
 	Short:   "pgtools service",
 	Long:    "pgtools service",
 	Example: "pgtools -v",
