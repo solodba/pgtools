@@ -6,13 +6,8 @@ import (
 )
 
 func (i *impl) RebuildStandby(ctx context.Context) error {
-	cmd := "service postgresql stop"
+	cmd := "mv /data/postgres/data /data/postgres/data_bak"
 	_, err := i.cmdConf.RunShell(cmd)
-	if err != nil {
-		return err
-	}
-	cmd = "mv /data/postgres/data /data/postgres/data_bak"
-	_, err = i.cmdConf.RunShell(cmd)
 	if err != nil {
 		return err
 	}
