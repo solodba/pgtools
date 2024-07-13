@@ -18,6 +18,9 @@ postgresql工具
 # 修复新备库
 ./pgtools repairms -u <系统用户> -w <密码> -m <新备库ip地址> -p <ssh端口号> -a <新主库ip地址> -b <新主库端口号>
 
+# pgreind同步主库数据再进行备库修复
+./pgtools pgrewind -u <系统用户> -w <密码> -m <新备库ip地址> -p <ssh端口号> -a <新主库ip地址> -b <新主库端口号>
+
 # 修复新备库keepalived服务
 ./pgtools repairska -u <系统用户> -w <密码> -m <新备库ip地址> -p <ssh端口号>
 
