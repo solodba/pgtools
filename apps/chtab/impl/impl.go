@@ -10,7 +10,8 @@ import (
 
 // 实现Service的结构体
 type impl struct {
-	db *sql.DB
+	cmdConf *conf.CmdConf
+	db      *sql.DB
 }
 
 // 实现Ioc中心Name方法
@@ -20,6 +21,7 @@ func (i *impl) Name() string {
 
 // 实现Ioc中心Conf方法
 func (i *impl) Conf() error {
+	i.cmdConf = conf.Conf.CmdConf
 	db, err := conf.Conf.PostgreSQL.GetDbConn()
 	if err != nil {
 		return err

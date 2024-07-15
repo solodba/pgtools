@@ -6,11 +6,24 @@ import (
 )
 
 func (i *impl) CheckPromoteLog(ctx context.Context) error {
-	cmd := `grep -i promote /etc/keepalived/takeover_pg.log`
-	result, err := i.cmdConf.RunShell(cmd)
-	if err != nil {
-		return fmt.Errorf("takeover_pg.log切换日志不存在")
+	switch i.cmdConf.PgType {
+	case "pg11":
+		cmd := `grep -i promote /etc/keepalived/check_pg.log`
+		result, err := i.cmdConf.RunShell(cmd)
+		if err != nil {
+			return fmt.Errorf("check_pg.log切换日志不存在")
+		}
+		fmt.Println(result)
+		return nil
+	case "pg13":
+		cmd := `grep -i promote /etc/keepalived/takeover_pg.log`
+		result, err := i.cmdConf.RunShell(cmd)
+		if err != nil {
+			return fmt.Errorf("takeover_pg.log切换日志不存在")
+		}
+		fmt.Println(result)
+		return nil
+	default:
+		return fmt.Errorf("[%s]该类型数据库不支持", i.cmdConf.PgType)
 	}
-	fmt.Println(result)
-	return nil
 }
