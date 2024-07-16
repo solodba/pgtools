@@ -18,7 +18,7 @@ func (i *impl) RebuildStandby(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		cmd = fmt.Sprintf(`cat >> /data/postgres/data/recovery.conf <<EOF
+		cmd = fmt.Sprintf(`cat > /data/postgres/data/recovery.conf <<EOF
 standby_mode = on
 primary_conninfo = 'host=%s port=%d user=postgres'
 recovery_target_timeline = 'latest'
