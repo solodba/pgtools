@@ -99,7 +99,7 @@ func (i *impl) RecoverDbToTxid(ctx context.Context, txInfo *recover.TxInfo) erro
 func (i *impl) StartDb(ctx context.Context) error {
 	fmt.Println("=======================================================================================")
 	fmt.Println("启动数据库")
-	cmd := `su - postgres -c "pg_ctl -D /data/postgres/data start"`
+	cmd := `su - postgres -c "pg_ctl -D /data/postgres/data start > /dev/null 2>&1"`
 	_, err := i.cmdConf.RunShell(cmd)
 	if err != nil {
 		return err
