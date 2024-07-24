@@ -10,7 +10,7 @@ const (
 // 服务接口
 type Service interface {
 	// 获取当前lsn号和当前lsn号所在的wal文件
-	GetLsnAndFile(context.Context) error
+	GetLsnAndFile(context.Context) (*FileInfo, error)
 	// 切换lsn日志
 	SwitchWalLog(context.Context) error
 	// 获取误删事务号
@@ -27,6 +27,8 @@ type Service interface {
 type FileInfo struct {
 	// 文件路径
 	FilePath string `json:"file_path"`
+	// 当前lsn号
+	LsnNum string `json:"lsn_num"`
 }
 
 // FileInfo结构体初始化函数

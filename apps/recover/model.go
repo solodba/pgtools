@@ -3,7 +3,7 @@ package recover
 // TxInfo结构体
 type TxInfo struct {
 	// 事务id
-	TxId int `json:"txid"`
+	TxId string `json:"txid"`
 }
 
 // TxInfo结构体构造函数
