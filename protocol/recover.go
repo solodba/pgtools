@@ -19,6 +19,26 @@ func NewRecoverService() *RecoverService {
 
 // RecoverService服务启动方法
 func (m *RecoverService) Start() error {
+	fileInfo, err := m.recoversvc.GetLsnAndFile(ctx)
+	if err != nil {
+		return err
+	}
+	txInfo, err := m.recoversvc.GetDeleteTxid(ctx, fileInfo)
+	if err != nil {
+		return err
+	}
+	err = m.recoversvc.StopDb(ctx)
+	if err != nil {
+		return err
+	}
+	err = m.recoversvc.RecoverDbToTxid(ctx, txInfo)
+	if err != nil {
+		return err
+	}
+	err = m.recoversvc.StartDb(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

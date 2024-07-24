@@ -29,4 +29,7 @@ postgresql工具
 
 # 修复新主库keepalived服务
 ./pgtools repairmka -u <系统用户> -w <密码> -m <新主库ip地址> -p <ssh端口号> -T <数据库类型pg11/pg13>
+
+# 恢复表数据
+./pgtools recover -u <系统用户> -w <密码> -m <新主库ip地址> -p <ssh端口号>
 ```
