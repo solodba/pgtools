@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"sort"
 	"strings"
 
 	"github.com/solodba/pgtools/apps/rectl"
@@ -20,18 +21,40 @@ func (i *impl) GetNextWal(ctx context.Context) (string, error) {
 	logSeqNum := result[16:]
 	var nextWalName string
 	if rectl.HexToDec(logSeqNum) == 255 {
-		logicalStr := rectl.DecToHex(rectl.HexToDec(logicalId) + 1)
+		logicalStr := rectl.DecToHexWal(rectl.HexToDec(logicalId) + 1)
 		nextWalName = timeline + logicalStr + "00000001"
 		return nextWalName, nil
 	}
-	logSeqStr := rectl.DecToHex(rectl.HexToDec(logSeqNum) + 1)
+	logSeqStr := rectl.DecToHexWal(rectl.HexToDec(logSeqNum) + 1)
 	nextWalName = timeline + logicalId + logSeqStr
 	return nextWalName, nil
 }
 
 // 获取下一个多事务ID和最旧多事务ID
 func (i *impl) GetMxid(ctx context.Context) (*rectl.Mxid, error) {
-	return nil, nil
+	cmd := `ls /data/postgres/data/pg_multixact/offsets`
+	result, err := i.cmdConf.RunShell(cmd)
+	if err != nil {
+		return nil, err
+	}
+	result = strings.Trim(result, "\n")
+	resultList := strings.Split(result, " ")
+	mxidList := make([]int, 0)
+	for _, item := range resultList {
+		mxidList = append(mxidList, int(rectl.HexToDec(item)))
+	}
+	sort.Ints(mxidList)
+	minMxid := mxidList[0]
+	maxMxid := mxidList[len(mxidList)-1]
+	maxid := rectl.NewMxid()
+	if minMxid == maxMxid && minMxid == 0 {
+		maxid.OldestMxid = "0x" + rectl.DecToHexMxid(65536)
+		maxid.NextMxid = "0x" + rectl.DecToHexMxid(65536)
+	} else {
+		maxid.OldestMxid = "0x" + rectl.DecToHexMxid(uint64(minMxid)*65536)
+		maxid.NextMxid = "0x" + rectl.DecToHexMxid((uint64(maxMxid)+1)*65536)
+	}
+	return maxid, nil
 }
 
 // 获取下一个多事务处理偏移量
