@@ -2,6 +2,7 @@ package impl
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"strings"
 
@@ -23,10 +24,12 @@ func (i *impl) GetNextWal(ctx context.Context) (string, error) {
 	if rectl.HexToDec(logSeqNum) == 255 {
 		logicalStr := rectl.DecToHexWal(rectl.HexToDec(logicalId) + 1)
 		nextWalName = timeline + logicalStr + "00000001"
+		fmt.Printf("最新的Wal日志名:%s\n", nextWalName)
 		return nextWalName, nil
 	}
 	logSeqStr := rectl.DecToHexWal(rectl.HexToDec(logSeqNum) + 1)
 	nextWalName = timeline + logicalId + logSeqStr
+	fmt.Printf("最新的Wal日志名:%s\n", nextWalName)
 	return nextWalName, nil
 }
 
@@ -54,15 +57,45 @@ func (i *impl) GetMxid(ctx context.Context) (*rectl.Mxid, error) {
 		maxid.OldestMxid = "0x" + rectl.DecToHexMxid(uint64(minMxid)*65536)
 		maxid.NextMxid = "0x" + rectl.DecToHexMxid((uint64(maxMxid)+1)*65536)
 	}
+	fmt.Printf("下一个多事务ID:%s\n", maxid.NextMxid)
+	fmt.Printf("最旧多事务ID:%s\n", maxid.OldestMxid)
 	return maxid, nil
 }
 
 // 获取下一个多事务处理偏移量
 func (i *impl) GetNextMxidOffset(ctx context.Context) (string, error) {
-	return "", nil
+	cmd := `ls /data/postgres/data/pg_multixact/members`
+	result, err := i.cmdConf.RunShell(cmd)
+	if err != nil {
+		return "", err
+	}
+	result = strings.Trim(result, "\n")
+	resultList := strings.Split(result, " ")
+	mxidList := make([]int, 0)
+	for _, item := range resultList {
+		mxidList = append(mxidList, int(rectl.HexToDec(item)))
+	}
+	sort.Ints(mxidList)
+	nextMxidOffset := mxidList[len(mxidList)-1]
+	fmt.Printf("下一个多事务处理偏移量:%s\n", "0x"+rectl.DecToHexMxid((uint64(nextMxidOffset)+1)*52352))
+	return "0x" + rectl.DecToHexMxid((uint64(nextMxidOffset)+1)*52352), nil
 }
 
 // 获取下一个事务ID
 func (i *impl) GetNextXid(ctx context.Context) (string, error) {
-	return "", nil
+	cmd := `ls /data/postgres/data/pg_xact`
+	result, err := i.cmdConf.RunShell(cmd)
+	if err != nil {
+		return "", err
+	}
+	result = strings.Trim(result, "\n")
+	resultList := strings.Split(result, " ")
+	xidList := make([]int, 0)
+	for _, item := range resultList {
+		xidList = append(xidList, int(rectl.HexToDec(item)))
+	}
+	sort.Ints(xidList)
+	xid := xidList[len(xidList)-1]
+	fmt.Printf("下一个事务ID:%s\n", "0x"+rectl.DecToHexMxid((uint64(xid)+1)*1048576))
+	return "0x" + rectl.DecToHexMxid((uint64(xid)+1)*1048576), nil
 }

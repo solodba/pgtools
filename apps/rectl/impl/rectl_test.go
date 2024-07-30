@@ -1,7 +1,6 @@
 package impl_test
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -18,5 +17,21 @@ func TestGetMxid(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	fmt.Println(maxid)
+	t.Log(maxid)
+}
+
+func TestGetNextMxidOffset(t *testing.T) {
+	nextMxidOffset, err := svc.GetNextMxidOffset(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(nextMxidOffset)
+}
+
+func TestGetNextXid(t *testing.T) {
+	nextXid, err := svc.GetNextXid(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(nextXid)
 }
