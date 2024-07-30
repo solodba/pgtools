@@ -31,5 +31,8 @@ postgresql工具
 ./pgtools repairmka -u <系统用户> -w <密码> -m <新主库ip地址> -p <ssh端口号> -T <数据库类型pg11/pg13>
 
 # 恢复表数据
-./pgtools recover -u <系统用户> -w <密码> -m <新主库ip地址> -p <ssh端口号>
+./pgtools recover -u <系统用户> -w <密码> -m <数据库ip地址> -p <ssh端口号>
+
+# 生成重建控制文件命令
+./pgtools rectl -u <系统用户> -w <密码> -m <数据库ip地址> -p <ssh端口号>
 ```
