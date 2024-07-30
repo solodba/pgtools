@@ -1,6 +1,8 @@
 package protocol
 
 import (
+	"fmt"
+
 	"github.com/solodba/mcube/apps"
 	"github.com/solodba/pgtools/apps/rectl"
 )
@@ -19,6 +21,12 @@ func NewRectlService() *RectlService {
 
 // RectlService服务启动方法
 func (m *RectlService) Start() error {
+	fmt.Println("=====================================================================================================================================")
+	_, err := m.rectlsvc.GenRebuildControlFileCmd(ctx)
+	if err != nil {
+		return err
+	}
+	fmt.Println("=====================================================================================================================================")
 	return nil
 }
 

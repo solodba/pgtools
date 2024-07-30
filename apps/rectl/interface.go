@@ -17,4 +17,6 @@ type Service interface {
 	GetNextMxidOffset(context.Context) (string, error)
 	// 获取下一个事务ID
 	GetNextXid(context.Context) (string, error)
+	// 生成重建控制文件语句
+	GenRebuildControlFileCmd(context.Context) (string, error)
 }

@@ -99,3 +99,26 @@ func (i *impl) GetNextXid(ctx context.Context) (string, error) {
 	fmt.Printf("下一个事务ID:%s\n", "0x"+rectl.DecToHexMxid((uint64(xid)+1)*1048576))
 	return "0x" + rectl.DecToHexMxid((uint64(xid)+1)*1048576), nil
 }
+
+// 生成重建控制文件语句
+func (i *impl) GenRebuildControlFileCmd(ctx context.Context) (string, error) {
+	nextWalName, err := i.GetNextWal(ctx)
+	if err != nil {
+		return "", nil
+	}
+	mxid, err := i.GetMxid(ctx)
+	if err != nil {
+		return "", nil
+	}
+	nextMxidOffset, err := i.GetNextMxidOffset(ctx)
+	if err != nil {
+		return "", nil
+	}
+	nextXid, err := i.GetNextXid(ctx)
+	if err != nil {
+		return "", nil
+	}
+	cmd := fmt.Sprintf("pg_resetwal -l %s -m %s,%s -O %s -x %s -D /data/postgres/data -f", nextWalName, mxid.NextMxid, mxid.OldestMxid, nextMxidOffset, nextXid)
+	fmt.Printf("重建控制文件语句:%s\n", cmd)
+	return cmd, nil
+}
