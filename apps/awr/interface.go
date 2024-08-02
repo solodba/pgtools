@@ -11,4 +11,8 @@ const (
 type Service interface {
 	// 获取当前系统信息
 	GetSystemInfo(context.Context) (*SystemInfo, error)
+	// 生成AWR数据
+	GenAwrData(context.Context) (*AwrData, error)
+	// 生成AWR报告
+	GenAwrReport(context.Context) error
 }

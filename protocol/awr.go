@@ -19,6 +19,10 @@ func NewAwrService() *AwrService {
 
 // AwrService服务启动方法
 func (m *AwrService) Start() error {
+	err := m.awrsvc.GenAwrReport(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
