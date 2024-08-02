@@ -39,7 +39,8 @@ const AwrTpl = `
 <body class="awr">
 	<h1 class="awr">PostgreSQL AWR</h1>
 	<h3 class="awr"><a class="awr" name="99999"></a>System Information</h3>
-	<table border="0" width="800" class="tdiff" summary="This table displays database instance information">
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays system information">
         <tbody>
             <tr>
                 <th class="awrbg" scope="col">Hostname</th>
@@ -48,6 +49,7 @@ const AwrTpl = `
                 <th class="awrbg" scope="col">Load Average</th>
                 <th class="awrbg" scope="col">Memory</th>
                 <th class="awrbg" scope="col">Swap</th>
+			</tr>
             <tr>
                 <td scope="row" class="awrnc">{{ .SystemInfo.Hostname }}</td>
 				<td scope="row" class="awrnc">{{ .SystemInfo.RunTime }}</td>
@@ -58,6 +60,61 @@ const AwrTpl = `
             </tr>
         </tbody>
     </table>
+	</p>
+	<h3 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster</h3>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Version</th>
+                <th class="awrbg" scope="col">StartTime</th>
+                <th class="awrbg" scope="col">SystemIdentifier</th>
+                <th class="awrbg" scope="col">TimeLine</th>
+                <th class="awrbg" scope="col">LastCheckpointTime</th>
+                <th class="awrbg" scope="col">RedoLsn</th>
+				<th class="awrbg" scope="col">CheckpointLsn</th>
+				<th class="awrbg" scope="col">TransactionId</th>
+				<th class="awrbg" scope="col">RecoveryMode?</th>
+			</tr>
+            <tr>
+                <td scope="row" class="awrnc">{{ .PgClusterInfo.ServerVersion }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.ServerStartTime }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.SystemIdentifier }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.TimeLine }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.LastCheckpointTime }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.RedoLsn }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.CheckpointLsn }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.TransactionId }}</td>
+				<td scope="row" class="awrnc">{{ .PgClusterInfo.RecoveryMode }}</td>
+            </tr>
+        </tbody>
+    </table>
+	</p>
+	<h3 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster Prameter</h3>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster parameter">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">name</th>
+                <th class="awrbg" scope="col">value</th>
+			</tr>
+			{{ range $index, $item := .PgClusterInfo.ParamSet.ParamItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 </body>
 </html>
 `
