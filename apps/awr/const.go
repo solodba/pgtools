@@ -115,6 +115,23 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr">SQL Statistics</h2>
+	<ul>
+		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>
+	</ul>
+	<p>
+		<a class="awr" name="550"></a>
+	</p>
+	<h3 class="awr">SQL ordered by User I/O</h3>
+	<table border="0" width="800" class="tdiff" summary="This table displays top SQL by User I/O">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">name</th>
+                <th class="awrbg" scope="col">value</th>
+			</tr>
+			
+        </tbody>
+    </table>
 </body>
 </html>
 `

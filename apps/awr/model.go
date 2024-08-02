@@ -81,6 +81,49 @@ func NewPgClusterInfo() *PgClusterInfo {
 	}
 }
 
+// ComsumeTopSql结构体
+type ComsumeTopSql struct {
+	UserId            string `json:"user_id"`
+	DbId              string `json:"db_id"`
+	Calls             string `json:"calls"`
+	MinExecTime       string `json:"min_exec_time"`
+	MaxExecTime       string `json:"max_exec_time"`
+	MeanExecTime      string `json:"mean_exec_time"`
+	TotalExecTime     string `json:"total_exec_time"`
+	SharedBlksHit     string `json:"shared_blk_hint"`
+	SharedBlksRead    string `json:"shared_blks_read"`
+	SharedBlksDirtied string `json:"shared_blks_dirtied"`
+	SharedBlksWritten string `json:"shared_blks_written"`
+	TempBlksRead      string `json:"temp_blks_read"`
+	TempBlksWritten   string `json:"temp_blks_written"`
+	BlkReadTime       string `json:"blk_read_time"`
+	BlkWriteTime      string `json:"blk_write_time"`
+	Query             string `json:"query"`
+}
+
+// ComsumeTopSqlSet结构体
+type ComsumeTopSqlSet struct {
+	Total              int              `json:"total"`
+	ComsumeTopSqlItems []*ComsumeTopSql `json:"comsume_top_sql_items"`
+}
+
+// ComsumeTopSql构造函数
+func NewComsumeTopSql() *ComsumeTopSql {
+	return &ComsumeTopSql{}
+}
+
+// ComsumeTopSqlSet构造函数
+func NewComsumeTopSqlSet() *ComsumeTopSqlSet {
+	return &ComsumeTopSqlSet{
+		ComsumeTopSqlItems: make([]*ComsumeTopSql, 0),
+	}
+}
+
+// ComsumeTopSqlSet结构体添加方法
+func (c *ComsumeTopSqlSet) AddItems(items ...*ComsumeTopSql) {
+	c.ComsumeTopSqlItems = append(c.ComsumeTopSqlItems, items...)
+}
+
 // AwrData结构体
 type AwrData struct {
 	SystemInfo    *SystemInfo    `json:"system_info"`

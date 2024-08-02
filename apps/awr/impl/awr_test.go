@@ -1,10 +1,22 @@
 package impl_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/solodba/pgtools/test/tools"
+)
 
 func TestGetSystemInfo(t *testing.T) {
 	_, err := svc.GetSystemInfo(ctx)
 	if err != nil {
 		t.Fatal()
 	}
+}
+
+func TestGetComsumeIoSql(t *testing.T) {
+	comsumeTopSqlSet, err := svc.GetComsumeIoSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeTopSqlSet))
 }
