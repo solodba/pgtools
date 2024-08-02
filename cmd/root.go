@@ -5,6 +5,7 @@ import (
 	"github.com/solodba/mcube/logger"
 	"github.com/solodba/mcube/version"
 	_ "github.com/solodba/pgtools/apps/all"
+	"github.com/solodba/pgtools/cmd/awr"
 	"github.com/solodba/pgtools/cmd/chklog"
 	"github.com/solodba/pgtools/cmd/chkms"
 	"github.com/solodba/pgtools/cmd/chkps"
@@ -39,7 +40,7 @@ var (
 
 // 根命令
 var RootCmd = &cobra.Command{
-	Use:     "pgtools [chkps|chkms|chklog|chktab|repairms|repairska|repairmka|pgrewind|rebuild|recover|rectl]",
+	Use:     "pgtools [chkps|chkms|chklog|chktab|repairms|repairska|repairmka|pgrewind|rebuild|recover|rectl|awr]",
 	Short:   "pgtools service",
 	Long:    "pgtools service",
 	Example: "pgtools -v",
@@ -79,7 +80,18 @@ func Initial() {
 // 执行函数
 func Execute() {
 	cobra.OnInitialize(Initial)
-	RootCmd.AddCommand(chkps.Cmd, chkms.Cmd, chklog.Cmd, chtab.Cmd, repairms.Cmd, repairmka.Cmd, repairska.Cmd, pgrewind.Cmd, rebuild.Cmd, recover.Cmd, rectl.Cmd)
+	RootCmd.AddCommand(chkps.Cmd,
+		chkms.Cmd,
+		chklog.Cmd,
+		chtab.Cmd,
+		repairms.Cmd,
+		repairmka.Cmd,
+		repairska.Cmd,
+		pgrewind.Cmd,
+		rebuild.Cmd,
+		recover.Cmd,
+		rectl.Cmd,
+		awr.Cmd)
 	err := RootCmd.Execute()
 	cobra.CheckErr(err)
 }
