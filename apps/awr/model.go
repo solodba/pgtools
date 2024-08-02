@@ -126,15 +126,17 @@ func (c *ComsumeTopSqlSet) AddItems(items ...*ComsumeTopSql) {
 
 // AwrData结构体
 type AwrData struct {
-	SystemInfo    *SystemInfo    `json:"system_info"`
-	PgClusterInfo *PgClusterInfo `json:"pg_cluster_info"`
+	SystemInfo      *SystemInfo       `json:"system_info"`
+	PgClusterInfo   *PgClusterInfo    `json:"pg_cluster_info"`
+	ComsumeIoSqlSet *ComsumeTopSqlSet `json:"comsume_io_sql_set"`
 }
 
 // AwrData结构体初始化函数
 func NewAwrData() *AwrData {
 	return &AwrData{
-		SystemInfo:    NewSystemInfo(),
-		PgClusterInfo: NewPgClusterInfo(),
+		SystemInfo:      NewSystemInfo(),
+		PgClusterInfo:   NewPgClusterInfo(),
+		ComsumeIoSqlSet: NewComsumeTopSqlSet(),
 	}
 }
 

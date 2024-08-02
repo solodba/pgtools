@@ -212,6 +212,9 @@ order by (blk_read_time+blk_write_time)/calls desc limit 10
 		if err != nil {
 			return nil, err
 		}
+		if len(comsumeTopSql.Query) > 60 {
+			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
 	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
@@ -228,9 +231,14 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	comsumeIoSqlSet, err := i.GetComsumeIoSql(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
+	awrData.ComsumeIoSqlSet = comsumeIoSqlSet
 	return awrData, nil
 }
 
