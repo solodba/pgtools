@@ -1,0 +1,155 @@
+
+pgmetrics run at: 2 Aug 2024 10:55:42 AM (now)
+
+PostgreSQL Cluster:
+    Name:                
+    Server Version:      13.10
+    Server Started:      2 Aug 2024 10:42:55 AM (12 minutes ago)
+    System Identifier:   7398367103310025343
+    Timeline:            1
+    Last Checkpoint:     2 Aug 2024 10:47:55 AM (7 minutes ago)
+    REDO LSN:            0/15BAD60
+    Checkpoint LSN:      0/15BAD98 (56 B since REDO)
+    Transaction IDs:     oldest = 478, next = 485, range = 7
+    Notification Queue:  0.0% used
+    Active Backends:     1 (max 1000)
+    Recovery Mode?       no
+
+System Information:
+    Hostname:            pg01
+    CPU Cores:           2 x AMD EPYC 7K62 48-Core Processor
+    Load Average:        0.00
+    Memory:              used=191 MiB, free=222 MiB, buff=64 MiB, cache=1.4 GiB
+    Swap:                used=0 B, free=0 B
+    +---------------------------------+-------------------+
+    |                         Setting |             Value |
+    +---------------------------------+-------------------+
+    |                  shared_buffers |   63872 (499 MiB) |
+    |                        work_mem |    40960 (40 MiB) |
+    |            maintenance_work_mem |    65536 (64 MiB) |
+    |                    temp_buffers |     8192 (64 MiB) |
+    |             autovacuum_work_mem |                -1 |
+    |                 temp_file_limit | 67108864 (64 GiB) |
+    |            max_worker_processes |                32 |
+    |          autovacuum_max_workers |                 8 |
+    | max_parallel_workers_per_gather |                 4 |
+    |        effective_io_concurrency |                 1 |
+    +---------------------------------+-------------------+
+
+WAL Files:
+    WAL Archiving?       yes
+    WAL Files:           1
+    Ready Files:         0
+    Archive Rate:        0.00 per min
+    Last Archived:       
+    Last Failure:        
+    Totals:              0 succeeded, 0 failed
+    Totals Since:        2 Aug 2024 10:42:55 AM (12 minutes ago)
+    +--------------------+----------------+
+    |            Setting |          Value |
+    +--------------------+----------------+
+    |          wal_level |        replica |
+    |    archive_timeout |              0 |
+    |    wal_compression |             on |
+    |       max_wal_size | 4096 (4.0 GiB) |
+    |       min_wal_size |  320 (320 MiB) |
+    | checkpoint_timeout |            300 |
+    |   full_page_writes |             on |
+    |      wal_keep_size | 32768 (32 GiB) |
+    +--------------------+----------------+
+
+BG Writer:
+    Checkpoint Rate:     0.16 per min
+    Average Write:       0 B per checkpoint
+    Total Checkpoints:   2 sched (100.0%) + 0 req (0.0%) = 2
+    Total Write:         0 B, @ 0 B per sec
+    Buffers Allocated:   369 (2.9 MiB)
+    Buffers Written:     0 chkpt (0.0%) + 0 bgw (0.0%) + 0 be (0.0%)
+    Clean Scan Stops:    0
+    BE fsyncs:           0
+    Counts Since:        2 Aug 2024 10:42:55 AM (12 minutes ago)
+    +------------------------------+--------------+
+    |                      Setting |        Value |
+    +------------------------------+--------------+
+    |               bgwriter_delay |      20 msec |
+    |         bgwriter_flush_after | 64 (512 KiB) |
+    |        bgwriter_lru_maxpages |          400 |
+    |      bgwriter_lru_multiplier |            2 |
+    |                   block_size |         8192 |
+    |           checkpoint_timeout |      300 sec |
+    | checkpoint_completion_target |          0.9 |
+    +------------------------------+--------------+
+
+Backends:
+    Total Backends:      1 (0.1% of max 1000)
+    Problematic:         0 waiting on locks, 0 waiting on other, 0 xact too long, 0 idle in xact
+
+Locks:
+    +------------+-------------+-------+
+    |  Lock Type | Not Granted | Total |
+    +------------+-------------+-------+
+    |   relation |           0 |     4 |
+    | virtualxid |           0 |     1 |
+    +------------+-------------+-------+
+    |            |           0 |     5 |
+    +------------+-------------+-------+
+
+Vacuum Progress:
+    No manual or auto vacuum jobs in progress.
+    +------------------------------+----------------+
+    |                      Setting |          Value |
+    +------------------------------+----------------+
+    |         maintenance_work_mem | 65536 (64 MiB) |
+    |                   autovacuum |             on |
+    | autovacuum_analyze_threshold |           1000 |
+    |  autovacuum_vacuum_threshold |           5000 |
+    |    autovacuum_freeze_max_age |      200000000 |
+    |       autovacuum_max_workers |              8 |
+    |           autovacuum_naptime |      21600 sec |
+    |        vacuum_freeze_min_age |       50000000 |
+    |      vacuum_freeze_table_age |      150000000 |
+    +------------------------------+----------------+
+
+Roles:
+    +---------------------------+-------+------+-------+-----------+----------+------------+---------+---------+--------------------------------------------------------------+
+    |                      Name | Login | Repl | Super | Creat Rol | Creat DB | Bypass RLS | Inherit | Expires |                                                    Member Of |
+    +---------------------------+-------+------+-------+-----------+----------+------------+---------+---------+--------------------------------------------------------------+
+    |                  postgres |   yes |  yes |   yes |       yes |      yes |        yes |     yes |         |                                                              |
+    |                pg_monitor |       |      |       |           |          |            |     yes |         | pg_read_all_settings, pg_read_all_stats, pg_stat_scan_tables |
+    |      pg_read_all_settings |       |      |       |           |          |            |     yes |         |                                                              |
+    |         pg_read_all_stats |       |      |       |           |          |            |     yes |         |                                                              |
+    |       pg_stat_scan_tables |       |      |       |           |          |            |     yes |         |                                                              |
+    |         pg_signal_backend |       |      |       |           |          |            |     yes |         |                                                              |
+    |      pg_read_server_files |       |      |       |           |          |            |     yes |         |                                                              |
+    |     pg_write_server_files |       |      |       |           |          |            |     yes |         |                                                              |
+    | pg_execute_server_program |       |      |       |           |          |            |     yes |         |                                                              |
+    +---------------------------+-------+------+-------+-----------+----------+------------+---------+---------+--------------------------------------------------------------+
+
+Tablespaces:
+    +------------+----------+-------------------------------+---------+---------------------------+-------------------------+
+    |       Name |    Owner |                      Location |    Size |                 Disk Used |              Inode Used |
+    +------------+----------+-------------------------------+---------+---------------------------+-------------------------+
+    | pg_default | postgres | $PGDATA = /data/postgres/data |  23 MiB | 2.9 GiB (14.7%) of 20 GiB | 90902 (6.9%) of 1310720 |
+    |  pg_global | postgres | $PGDATA = /data/postgres/data | 559 KiB | 2.9 GiB (14.7%) of 20 GiB | 90902 (6.9%) of 1310720 |
+    +------------+----------+-------------------------------+---------+---------------------------+-------------------------+
+
+Database #1:
+    Name:                postgres
+    Owner:               postgres
+    Tablespace:          pg_default
+    Connections:         1 (no max limit)
+    Frozen Xid Age:      7
+    Transactions:        99 (100.0%) commits, 0 (0.0%) rollbacks
+    Cache Hits:          97.4%
+    Rows Changed:        ins 0.0%, upd 0.0%, del 0.0%
+    Total Temp:          0 B in 0 files
+    Problems:            0 deadlocks, 0 conflicts
+    Totals Since:        2 Aug 2024 10:46:13 AM (9 minutes ago)
+    Size:                7.7 MiB
+    Installed Extensions:
+      +---------+---------+------------------------------+
+      |    Name | Version |                      Comment |
+      +---------+---------+------------------------------+
+      | plpgsql |     1.0 | PL/pgSQL procedural language |
+      +---------+---------+------------------------------+
+

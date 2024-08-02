@@ -10,7 +10,7 @@
 *.out
 *.idea
 *vendor
-*.log
+# *.log
 *.VSCodeCounter
 
 cover.out
