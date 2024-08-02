@@ -61,9 +61,9 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
-	<h3 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster</h3>
+	<h3 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster Information</h3>
 	<p>
-	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster">
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster information">
         <tbody>
             <tr>
                 <th class="awrbg" scope="col">Version</th>
