@@ -131,6 +131,7 @@ type AwrData struct {
 	ComsumeIoSqlSet     *ComsumeTopSqlSet `json:"comsume_io_sql_set"`
 	ComsumeTimeSqlSet   *ComsumeTopSqlSet `json:"comsume_time_sql_set"`
 	ComsumeBufferSqlSet *ComsumeTopSqlSet `json:"comsume_buffer_sql_set"`
+	ComsumeTempSqlSet   *ComsumeTopSqlSet `json:"comsume_temp_sql_set"`
 }
 
 // AwrData结构体初始化函数
@@ -141,6 +142,7 @@ func NewAwrData() *AwrData {
 		ComsumeIoSqlSet:     NewComsumeTopSqlSet(),
 		ComsumeTimeSqlSet:   NewComsumeTopSqlSet(),
 		ComsumeBufferSqlSet: NewComsumeTopSqlSet(),
+		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
 	}
 }
 

@@ -19,6 +19,8 @@ type Service interface {
 	GetComsumeTimeSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 获取当前消耗Buffer TOP 10的SQL
 	GetComsumeBufferSql(context.Context) (*ComsumeTopSqlSet, error)
+	// 获取当前消耗temp空间的SQL
+	GetComsumeTempSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 生成AWR数据
 	GenAwrData(context.Context) (*AwrData, error)
 	// 生成AWR报告

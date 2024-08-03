@@ -36,3 +36,11 @@ func TestGetComsumeBufferSql(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(comsumeTopSqlSet))
 }
+
+func TestGetComsumeTempSql(t *testing.T) {
+	comsumeTopSqlSet, err := svc.GetComsumeTempSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeTopSqlSet))
+}
