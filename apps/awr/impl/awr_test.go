@@ -20,3 +20,11 @@ func TestGetComsumeIoSql(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(comsumeTopSqlSet))
 }
+
+func TestGetComsumeTimeSql(t *testing.T) {
+	comsumeTopSqlSet, err := svc.GetComsumeTimeSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeTopSqlSet))
+}

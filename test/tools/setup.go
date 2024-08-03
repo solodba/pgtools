@@ -15,7 +15,7 @@ func LoadConfig() {
 	conf.Conf.CmdConf.Sysport = 22
 	conf.Conf.PostgreSQL.Username = "postgres"
 	conf.Conf.PostgreSQL.Password = "postgres"
-	conf.Conf.PostgreSQL.Host = "119.45.61.68"
+	conf.Conf.PostgreSQL.Host = "119.45.46.40"
 	conf.Conf.PostgreSQL.Port = 5432
 	conf.Conf.PostgreSQL.DB = "postgres"
 }

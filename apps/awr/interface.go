@@ -15,6 +15,8 @@ type Service interface {
 	GetPgClusterInfo(context.Context) (*PgClusterInfo, error)
 	// 获取当前IO消耗TOP 10的SQL
 	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
+	// 获取当前耗时TOP 10的SQL
+	GetComsumeTimeSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 生成AWR数据
 	GenAwrData(context.Context) (*AwrData, error)
 	// 生成AWR报告
