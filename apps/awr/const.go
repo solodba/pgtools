@@ -119,6 +119,7 @@ const AwrTpl = `
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>
 		<li class="awr"><a class="awr" href="#560">SQL ordered by Elapsed Time</a></li>
+		<li class="awr"><a class="awr" href="#570">SQL ordered by Shared Buffer</a></li>
 	</ul>
 	<p>
 		<a class="awr" name="550"></a>
@@ -213,6 +214,74 @@ const AwrTpl = `
 				<th class="awrbg" scope="col">query</th>
 			</tr>
 			{{ range $index, $item := .ComsumeTimeSqlSet.ComsumeTopSqlItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.UserId }}</td>
+				<td scope="row" class="awrc">{{ $item.DbId }}</td>
+				<td scope="row" class="awrc">{{ $item.Calls }}</td>
+				<td scope="row" class="awrc">{{ $item.MinExecTime }}</td>
+				<td scope="row" class="awrc">{{ $item.MaxExecTime }}</td>
+				<td scope="row" class="awrc">{{ $item.MeanExecTime }}</td>
+				<td scope="row" class="awrc">{{ $item.TotalExecTime }}</td>
+				<td scope="row" class="awrc">{{ $item.SharedBlksHit }}</td>
+				<td scope="row" class="awrc">{{ $item.SharedBlksRead }}</td>
+				<td scope="row" class="awrc">{{ $item.SharedBlksDirtied }}</td>
+				<td scope="row" class="awrc">{{ $item.SharedBlksWritten }}</td>
+				<td scope="row" class="awrc">{{ $item.TempBlksRead }}</td>
+				<td scope="row" class="awrc">{{ $item.TempBlksWritten }}</td>
+				<td scope="row" class="awrc">{{ $item.BlkReadTime }}</td>
+				<td scope="row" class="awrc">{{ $item.BlkWriteTime }}</td>
+				<td scope="row" class="awrc">{{ $item.Query }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.UserId }}</td>
+				<td scope="row" class="awrnc">{{ $item.DbId }}</td>
+				<td scope="row" class="awrnc">{{ $item.Calls }}</td>
+				<td scope="row" class="awrnc">{{ $item.MinExecTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.MaxExecTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.MeanExecTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.TotalExecTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.SharedBlksHit }}</td>
+				<td scope="row" class="awrnc">{{ $item.SharedBlksRead }}</td>
+				<td scope="row" class="awrnc">{{ $item.SharedBlksDirtied }}</td>
+				<td scope="row" class="awrnc">{{ $item.SharedBlksWritten }}</td>
+				<td scope="row" class="awrnc">{{ $item.TempBlksRead }}</td>
+				<td scope="row" class="awrnc">{{ $item.TempBlksWritten }}</td>
+				<td scope="row" class="awrnc">{{ $item.BlkReadTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.BlkWriteTime }}</td>
+				<td scope="row" class="awrnc">{{ $item.Query }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	<p>
+		<a class="awr" name="570"></a>
+	</p>
+	<h3 class="awr">SQL ordered by Shared Buffer</h3>
+	<table border="0" width="800" class="tdiff" summary="This table displays top SQL by Shared Buffer">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">userid</th>
+				<th class="awrbg" scope="col">dbid</th>
+				<th class="awrbg" scope="col">calls</th>
+				<th class="awrbg" scope="col">min_exec_time</th>
+				<th class="awrbg" scope="col">max_exec_time</th>
+				<th class="awrbg" scope="col">mean_exec_time</th>
+				<th class="awrbg" scope="col">total_exec_time</th>
+				<th class="awrbg" scope="col">shared_blks_hit</th>
+				<th class="awrbg" scope="col">shared_blks_read</th>
+				<th class="awrbg" scope="col">shared_blks_dirtied</th>
+				<th class="awrbg" scope="col">shared_blks_written</th>
+				<th class="awrbg" scope="col">temp_blks_read</th>
+				<th class="awrbg" scope="col">temp_blks_written</th>
+				<th class="awrbg" scope="col">blk_read_time</th>
+				<th class="awrbg" scope="col">blk_write_time</th>
+				<th class="awrbg" scope="col">query</th>
+			</tr>
+			{{ range $index, $item := .ComsumeBufferSqlSet.ComsumeTopSqlItems }}
 			{{ if eq (mod $index 2) 1 }}
             <tr>
 				<td scope="row" class="awrc">{{ $item.UserId }}</td>

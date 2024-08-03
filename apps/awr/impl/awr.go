@@ -281,6 +281,66 @@ order by total_exec_time desc limit 10
 	return comsumeTopSqlSet, nil
 }
 
+// 获取当前消耗Buffer TOP 10的SQL
+func (i *impl) GetComsumeBufferSql(ctx context.Context) (*awr.ComsumeTopSqlSet, error) {
+	sql := `
+select 
+userid::regrole,
+dbid,
+calls,
+min_exec_time,
+max_exec_time,
+mean_exec_time,
+total_exec_time,
+shared_blks_hit,
+shared_blks_read,
+shared_blks_dirtied,
+shared_blks_written,
+temp_blks_read,
+temp_blks_written,
+blk_read_time,
+blk_write_time,
+query
+from pg_stat_statements
+order by (shared_blks_hit+shared_blks_dirtied) desc limit 10
+`
+	rows, err := i.db.QueryContext(ctx, sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	comsumeTopSqlSet := awr.NewComsumeTopSqlSet()
+	for rows.Next() {
+		comsumeTopSql := awr.NewComsumeTopSql()
+		err = rows.Scan(
+			&comsumeTopSql.UserId,
+			&comsumeTopSql.DbId,
+			&comsumeTopSql.Calls,
+			&comsumeTopSql.MinExecTime,
+			&comsumeTopSql.MaxExecTime,
+			&comsumeTopSql.MeanExecTime,
+			&comsumeTopSql.TotalExecTime,
+			&comsumeTopSql.SharedBlksHit,
+			&comsumeTopSql.SharedBlksRead,
+			&comsumeTopSql.SharedBlksDirtied,
+			&comsumeTopSql.SharedBlksWritten,
+			&comsumeTopSql.TempBlksRead,
+			&comsumeTopSql.TempBlksWritten,
+			&comsumeTopSql.BlkReadTime,
+			&comsumeTopSql.BlkWriteTime,
+			&comsumeTopSql.Query)
+		if err != nil {
+			return nil, err
+		}
+		if len(comsumeTopSql.Query) > 60 {
+			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+		}
+		comsumeTopSqlSet.AddItems(comsumeTopSql)
+	}
+	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
+	return comsumeTopSqlSet, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)
@@ -299,11 +359,16 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	comsumeBufferSqlSet, err := i.GetComsumeBufferSql(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
 	awrData.ComsumeIoSqlSet = comsumeIoSqlSet
 	awrData.ComsumeTimeSqlSet = comsumeTimeSqlSet
+	awrData.ComsumeBufferSqlSet = comsumeBufferSqlSet
 	return awrData, nil
 }
 

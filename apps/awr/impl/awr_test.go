@@ -28,3 +28,11 @@ func TestGetComsumeTimeSql(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(comsumeTopSqlSet))
 }
+
+func TestGetComsumeBufferSql(t *testing.T) {
+	comsumeTopSqlSet, err := svc.GetComsumeBufferSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeTopSqlSet))
+}
