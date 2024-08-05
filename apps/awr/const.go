@@ -61,7 +61,7 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
-	<h2 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster Information</h2>
+	<h2 class="awr"><a class="awr" name="99999"></a>Cluster Information</h2>
 	<p>
 	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster information">
         <tbody>
@@ -90,7 +90,7 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
-	<h2 class="awr"><a class="awr" name="99999"></a>PostgreSQL Cluster Prameter</h2>
+	<h2 class="awr"><a class="awr" name="99999"></a>Cluster Prameter</h2>
 	<p>
 	<table border="0" width="800" class="tdiff" summary="This table displays postgresql cluster parameter">
         <tbody>
