@@ -129,7 +129,7 @@ const AwrTpl = `
 				<th class="awrbg" scope="col">ArchivedFailCount</th>
 				<th class="awrbg" scope="col">Total</th>
 			</tr>
-			{{ range $index, $item := .PgClusterInfo.WalFileInfo }}
+			{{ range $index, $item := .WalFileInfo }}
 			{{ if eq (mod $index 2) 1 }}
             <tr>
 				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
