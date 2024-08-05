@@ -252,7 +252,7 @@ const AwrTpl = `
                 <th class="awrbg" scope="col">name</th>
                 <th class="awrbg" scope="col">value</th>
 			</tr>
-			{{ range $index, $item := ..VacuumInfoSet.ParamSet.ParamItems }}
+			{{ range $index, $item := .VacuumInfoSet.ParamSet.ParamItems }}
 			{{ if eq (mod $index 2) 1 }}
             <tr>
 				<td scope="row" class="awrc">{{ $item.Name }}</td>
