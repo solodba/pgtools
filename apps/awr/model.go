@@ -183,6 +183,45 @@ func (l *LockInfoSet) AddItems(items ...*LockInfo) {
 	l.LockInfoItems = append(l.LockInfoItems, items...)
 }
 
+// VacuumInfo结构体
+type VacuumInfo struct {
+	Pid              string `json:"pid"`
+	Datname          string `json:"datname"`
+	TableName        string `json:"table_name"`
+	Phase            string `json:"phase"`
+	HeapBlksTotal    string `json:"heap_blks_total"`
+	HeapBlksScanned  string `json:"heap_blks_scanned"`
+	HeapBlksVacuumed string `json:"heap_blks_vacuumed"`
+	IndexVacuumCount string `json:"index_vacuum_count"`
+	MaxDeadTuples    string `json:"max_dead_tuples"`
+	NumDeadTuples    string `json:"num_dead_tuples"`
+}
+
+// VacuumInfoSet结构体
+type VacuumInfoSet struct {
+	Total           int           `json:"total"`
+	ParamSet        *ParamSet     `json:"param_set"`
+	VacuumInfoItems []*VacuumInfo `json:"vacuum_info_items"`
+}
+
+// VacuumInfo结构体构造函数
+func NewVacuumInfo() *VacuumInfo {
+	return &VacuumInfo{}
+}
+
+// VacuumInfoSet结构体构造函数
+func NewVacuumInfoSet() *VacuumInfoSet {
+	return &VacuumInfoSet{
+		VacuumInfoItems: make([]*VacuumInfo, 0),
+		ParamSet:        NewParamSet(),
+	}
+}
+
+// VacuumInfoSet结构体添加方法
+func (v *VacuumInfoSet) AddItems(items ...*VacuumInfo) {
+	v.VacuumInfoItems = append(v.VacuumInfoItems, items...)
+}
+
 // AwrData结构体
 type AwrData struct {
 	SystemInfo          *SystemInfo       `json:"system_info"`
@@ -193,6 +232,7 @@ type AwrData struct {
 	ComsumeTempSqlSet   *ComsumeTopSqlSet `json:"comsume_temp_sql_set"`
 	WalFileInfo         *WalFileInfo      `json:"wal_file_info"`
 	LockInfoSet         *LockInfoSet      `json:"lock_info_set"`
+	VacuumInfoSet       *VacuumInfoSet    `json:"vacuum_info_set"`
 }
 
 // AwrData结构体初始化函数
@@ -206,6 +246,7 @@ func NewAwrData() *AwrData {
 		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
 		WalFileInfo:         NewWalFileInfo(),
 		LockInfoSet:         NewLockInfoSet(),
+		VacuumInfoSet:       NewVacuumInfoSet(),
 	}
 }
 

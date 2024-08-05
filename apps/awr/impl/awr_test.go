@@ -60,3 +60,11 @@ func TestGetPgLockInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(lockInfoSet))
 }
+
+func TestGetPgVacuumInfo(t *testing.T) {
+	vacuumInfo, err := svc.GetPgVacuumInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(vacuumInfo))
+}

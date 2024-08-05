@@ -484,6 +484,74 @@ func (i *impl) GetPgLockInfo(ctx context.Context) (*awr.LockInfoSet, error) {
 	return lockInfoSet, nil
 }
 
+// 获取当前VACUUM信息
+func (i *impl) GetPgVacuumInfo(ctx context.Context) (*awr.VacuumInfoSet, error) {
+	sql := `
+SELECT
+    pid,
+    datname,
+    relid::regclass AS table_name,
+    phase,
+    heap_blks_total,
+    heap_blks_scanned,
+    heap_blks_vacuumed,
+    index_vacuum_count,
+    max_dead_tuples,
+    num_dead_tuples
+FROM
+    pg_stat_progress_vacuum`
+	rows, err := i.db.QueryContext(ctx, sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	vacuumInfoSet := awr.NewVacuumInfoSet()
+	for rows.Next() {
+		vacuumInfo := awr.NewVacuumInfo()
+		err = rows.Scan(
+			&vacuumInfo.Pid,
+			&vacuumInfo.Datname,
+			&vacuumInfo.TableName,
+			&vacuumInfo.Phase,
+			&vacuumInfo.HeapBlksTotal,
+			&vacuumInfo.HeapBlksScanned,
+			&vacuumInfo.HeapBlksVacuumed,
+			&vacuumInfo.IndexVacuumCount,
+			&vacuumInfo.MaxDeadTuples,
+			&vacuumInfo.NumDeadTuples,
+		)
+		if err != nil {
+			return nil, err
+		}
+		vacuumInfoSet.AddItems(vacuumInfo)
+	}
+	vacuumInfoSet.Total = len(vacuumInfoSet.VacuumInfoItems)
+	args := []string{"maintenance_work_mem",
+		"autovacuum",
+		"autovacuum_analyze_threshold",
+		"autovacuum_vacuum_threshold",
+		"autovacuum_freeze_max_age",
+		"autovacuum_max_workers",
+		"autovacuum_naptime",
+		"vacuum_freeze_min_age",
+		"vacuum_freeze_table_age",
+	}
+	paramSet := awr.NewParamSet()
+	for _, arg := range args {
+		param := awr.NewParam()
+		row := i.db.QueryRowContext(ctx, "select setting from pg_settings where name=$1", arg)
+		err = row.Scan(&param.Value)
+		if err != nil {
+			return nil, err
+		}
+		param.Name = arg
+		paramSet.AddItems(param)
+	}
+	paramSet.Total = len(paramSet.ParamItems)
+	vacuumInfoSet.ParamSet = paramSet
+	return vacuumInfoSet, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)
@@ -518,6 +586,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	vaccumInfoSet, err := i.GetPgVacuumInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -527,6 +599,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.ComsumeTempSqlSet = comsumeTempSqlSet
 	awrData.WalFileInfo = walFileInfo
 	awrData.LockInfoSet = lockInfoSet
+	awrData.VacuumInfoSet = vaccumInfoSet
 	return awrData, nil
 }
 
