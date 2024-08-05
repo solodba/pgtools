@@ -514,6 +514,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	lockInfoSet, err := i.GetPgLockInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -522,6 +526,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.ComsumeBufferSqlSet = comsumeBufferSqlSet
 	awrData.ComsumeTempSqlSet = comsumeTempSqlSet
 	awrData.WalFileInfo = walFileInfo
+	awrData.LockInfoSet = lockInfoSet
 	return awrData, nil
 }
 
