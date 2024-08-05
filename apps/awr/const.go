@@ -130,14 +130,14 @@ const AwrTpl = `
 				<th class="awrbg" scope="col">Total</th>
 			</tr>
             <tr>
-				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
-				<td scope="row" class="awrc">{{ $item.WalFileCount }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchivedFileCount }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchiveRate }}</td>
-				<td scope="row" class="awrc">{{ $item.LastArchived }}</td>
-				<td scope="row" class="awrc">{{ $item.LastFailure }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchivedFailCount }}</td>
-				<td scope="row" class="awrc">{{ $item.Total }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.ArchiveMode }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.WalFileCount }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.ArchivedFileCount }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.ArchiveRate }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.LastArchived }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.LastFailure }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.ArchivedFailCount }}</td>
+				<td scope="row" class="awrc">{{ .WalFileInfo.Total }}</td>
             </tr>
         </tbody>
     </table>
