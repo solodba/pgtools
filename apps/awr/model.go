@@ -124,33 +124,6 @@ func (c *ComsumeTopSqlSet) AddItems(items ...*ComsumeTopSql) {
 	c.ComsumeTopSqlItems = append(c.ComsumeTopSqlItems, items...)
 }
 
-// AwrData结构体
-type AwrData struct {
-	SystemInfo          *SystemInfo       `json:"system_info"`
-	PgClusterInfo       *PgClusterInfo    `json:"pg_cluster_info"`
-	ComsumeIoSqlSet     *ComsumeTopSqlSet `json:"comsume_io_sql_set"`
-	ComsumeTimeSqlSet   *ComsumeTopSqlSet `json:"comsume_time_sql_set"`
-	ComsumeBufferSqlSet *ComsumeTopSqlSet `json:"comsume_buffer_sql_set"`
-	ComsumeTempSqlSet   *ComsumeTopSqlSet `json:"comsume_temp_sql_set"`
-}
-
-// AwrData结构体初始化函数
-func NewAwrData() *AwrData {
-	return &AwrData{
-		SystemInfo:          NewSystemInfo(),
-		PgClusterInfo:       NewPgClusterInfo(),
-		ComsumeIoSqlSet:     NewComsumeTopSqlSet(),
-		ComsumeTimeSqlSet:   NewComsumeTopSqlSet(),
-		ComsumeBufferSqlSet: NewComsumeTopSqlSet(),
-		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
-	}
-}
-
-// 取模运算函数
-func Mod(x, y int) int {
-	return x % y
-}
-
 // WalFileInfo结构体
 type WalFileInfo struct {
 	// 是否开启归档
@@ -174,4 +147,33 @@ type WalFileInfo struct {
 // WalFileInfo结构体构造函数
 func NewWalFileInfo() *WalFileInfo {
 	return &WalFileInfo{}
+}
+
+// AwrData结构体
+type AwrData struct {
+	SystemInfo          *SystemInfo       `json:"system_info"`
+	PgClusterInfo       *PgClusterInfo    `json:"pg_cluster_info"`
+	ComsumeIoSqlSet     *ComsumeTopSqlSet `json:"comsume_io_sql_set"`
+	ComsumeTimeSqlSet   *ComsumeTopSqlSet `json:"comsume_time_sql_set"`
+	ComsumeBufferSqlSet *ComsumeTopSqlSet `json:"comsume_buffer_sql_set"`
+	ComsumeTempSqlSet   *ComsumeTopSqlSet `json:"comsume_temp_sql_set"`
+	WalFileInfo         *WalFileInfo      `json:"wal_file_info"`
+}
+
+// AwrData结构体初始化函数
+func NewAwrData() *AwrData {
+	return &AwrData{
+		SystemInfo:          NewSystemInfo(),
+		PgClusterInfo:       NewPgClusterInfo(),
+		ComsumeIoSqlSet:     NewComsumeTopSqlSet(),
+		ComsumeTimeSqlSet:   NewComsumeTopSqlSet(),
+		ComsumeBufferSqlSet: NewComsumeTopSqlSet(),
+		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
+		WalFileInfo:         NewWalFileInfo(),
+	}
+}
+
+// 取模运算函数
+func Mod(x, y int) int {
+	return x % y
 }

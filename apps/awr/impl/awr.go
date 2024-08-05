@@ -464,6 +464,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	walFileInfo, err := i.GetPgWalFileInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -471,6 +475,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.ComsumeTimeSqlSet = comsumeTimeSqlSet
 	awrData.ComsumeBufferSqlSet = comsumeBufferSqlSet
 	awrData.ComsumeTempSqlSet = comsumeTempSqlSet
+	awrData.WalFileInfo = walFileInfo
 	return awrData, nil
 }
 
