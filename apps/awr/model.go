@@ -142,11 +142,15 @@ type WalFileInfo struct {
 	ArchivedFailCount string `json:"archived_fail_count"`
 	// 总体信息
 	Total string `json:"total"`
+	// walfile相关参数集合
+	ParamSet *ParamSet `json:"param_set"`
 }
 
 // WalFileInfo结构体构造函数
 func NewWalFileInfo() *WalFileInfo {
-	return &WalFileInfo{}
+	return &WalFileInfo{
+		ParamSet: NewParamSet(),
+	}
 }
 
 // AwrData结构体

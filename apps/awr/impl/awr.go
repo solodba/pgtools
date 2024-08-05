@@ -427,6 +427,10 @@ func (i *impl) GetPgWalFileInfo(ctx context.Context) (*awr.WalFileInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+	_, err = i.db.ExecContext(ctx, `select pg_sleep(10)`)
+	if err != nil {
+		return nil, err
+	}
 	sql := `SELECT (a.archived_count - t.total_archived) / EXTRACT(EPOCH FROM (now() - t.current_time))/60 AS archive_rate_per_min FROM pg_stat_archiver a,temp_archiver_stats t`
 	row = i.db.QueryRowContext(ctx, sql)
 	err = row.Scan(&walFileInfo.ArchiveRate)
@@ -435,6 +439,28 @@ func (i *impl) GetPgWalFileInfo(ctx context.Context) (*awr.WalFileInfo, error) {
 	}
 	walFileInfo.ArchiveRate = fmt.Sprintf("%s per min", walFileInfo.ArchiveRate)
 	walFileInfo.Total = fmt.Sprintf("%s succeeded, %s failed", walFileInfo.ArchivedFileCount, walFileInfo.ArchivedFailCount)
+	args := []string{"wal_level",
+		"archive_timeout",
+		"wal_compression",
+		"max_wal_size",
+		"min_wal_size",
+		"checkpoint_timeout",
+		"full_page_writes",
+		"wal_keep_size",
+	}
+	paramSet := awr.NewParamSet()
+	for _, arg := range args {
+		param := awr.NewParam()
+		row = i.db.QueryRowContext(ctx, "select setting from pg_settings where name=$1", arg)
+		err = row.Scan(&param.Value)
+		if err != nil {
+			return nil, err
+		}
+		param.Name = arg
+		paramSet.AddItems(param)
+	}
+	paramSet.Total = len(paramSet.ParamItems)
+	walFileInfo.ParamSet = paramSet
 	return walFileInfo, nil
 }
 
