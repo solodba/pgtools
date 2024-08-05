@@ -15,6 +15,8 @@ type Service interface {
 	GetPgClusterInfo(context.Context) (*PgClusterInfo, error)
 	// 获取当前数据库聚簇WAL Files信息
 	GetPgWalFileInfo(context.Context) (*WalFileInfo, error)
+	// 获取当前所有锁信息
+	GetPgLockInfo(context.Context) (*LockInfoSet, error)
 	// 获取当前IO消耗TOP 10的SQL
 	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 获取当前耗时TOP 10的SQL

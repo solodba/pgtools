@@ -464,6 +464,26 @@ func (i *impl) GetPgWalFileInfo(ctx context.Context) (*awr.WalFileInfo, error) {
 	return walFileInfo, nil
 }
 
+// 获取当前所有锁信息
+func (i *impl) GetPgLockInfo(ctx context.Context) (*awr.LockInfoSet, error) {
+	rows, err := i.db.QueryContext(ctx, `select locktype,granted,count(*) total from pg_locks group by locktype,granted`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	lockInfoSet := awr.NewLockInfoSet()
+	for rows.Next() {
+		lockInfo := awr.NewLockInfo()
+		err = rows.Scan(&lockInfo.LockType, &lockInfo.Granted, &lockInfo.Total)
+		if err != nil {
+			return nil, err
+		}
+		lockInfoSet.AddItems(lockInfo)
+	}
+	lockInfoSet.Total = len(lockInfoSet.LockInfoItems)
+	return lockInfoSet, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)

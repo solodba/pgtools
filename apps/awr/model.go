@@ -153,6 +153,36 @@ func NewWalFileInfo() *WalFileInfo {
 	}
 }
 
+// LockInfo结构体
+type LockInfo struct {
+	LockType string `json:"lock_type"`
+	Granted  string `json:"granted"`
+	Total    string `json:"total"`
+}
+
+// LockInfoSet结构体
+type LockInfoSet struct {
+	Total         int         `json:"total"`
+	LockInfoItems []*LockInfo `json:"lock_info_items"`
+}
+
+// LockInfo结构体构造函数
+func NewLockInfo() *LockInfo {
+	return &LockInfo{}
+}
+
+// LockInfoSet结构体构造函数
+func NewLockInfoSet() *LockInfoSet {
+	return &LockInfoSet{
+		LockInfoItems: make([]*LockInfo, 0),
+	}
+}
+
+// LockInfoSet结构体添加方法
+func (l *LockInfoSet) AddItems(items ...*LockInfo) {
+	l.LockInfoItems = append(l.LockInfoItems, items...)
+}
+
 // AwrData结构体
 type AwrData struct {
 	SystemInfo          *SystemInfo       `json:"system_info"`
@@ -162,6 +192,7 @@ type AwrData struct {
 	ComsumeBufferSqlSet *ComsumeTopSqlSet `json:"comsume_buffer_sql_set"`
 	ComsumeTempSqlSet   *ComsumeTopSqlSet `json:"comsume_temp_sql_set"`
 	WalFileInfo         *WalFileInfo      `json:"wal_file_info"`
+	LockInfoSet         *LockInfoSet      `json:"lock_info_set"`
 }
 
 // AwrData结构体初始化函数
@@ -174,6 +205,7 @@ func NewAwrData() *AwrData {
 		ComsumeBufferSqlSet: NewComsumeTopSqlSet(),
 		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
 		WalFileInfo:         NewWalFileInfo(),
+		LockInfoSet:         NewLockInfoSet(),
 	}
 }
 

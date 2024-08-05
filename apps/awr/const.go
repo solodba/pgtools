@@ -167,6 +167,34 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Lock Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql lock information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">LockType</th>
+                <th class="awrbg" scope="col">Granted</th>
+				<th class="awrbg" scope="col">Total</th>
+			</tr>
+			{{ range $index, $item := .LockInfoSet.LockInfoItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.LockType }}</td>
+				<td scope="row" class="awrc">{{ $item.Granted }}</td>
+				<td scope="row" class="awrc">{{ $item.Total }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.LockType }}</td>
+				<td scope="row" class="awrc">{{ $item.Granted }}</td>
+				<td scope="row" class="awrc">{{ $item.Total }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>

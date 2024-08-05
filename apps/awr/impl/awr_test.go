@@ -52,3 +52,11 @@ func TestGetPgWalFileInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(walFileInfo))
 }
+
+func TestGetPgLockInfo(t *testing.T) {
+	lockInfoSet, err := svc.GetPgLockInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(lockInfoSet))
+}
