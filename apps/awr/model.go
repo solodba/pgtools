@@ -150,3 +150,28 @@ func NewAwrData() *AwrData {
 func Mod(x, y int) int {
 	return x % y
 }
+
+// WalFileInfo结构体
+type WalFileInfo struct {
+	// 是否开启归档
+	ArchiveMode string `json:"archive_mode"`
+	// 当前WAL文件总数
+	WalFileCount string `json:"wal_count"`
+	// 归档WAL文件总数
+	ArchivedFileCount string `json:"archived_file_count"`
+	// WAL文件归档速率
+	ArchiveRate string `json:"archive_rate"`
+	// 最后归档WAL文件名
+	LastArchived string `json:"last_archived"`
+	// 最后归档失败WAL文件名
+	LastFailure string `json:"last_failure"`
+	// 归档失败文件总数量
+	ArchivedFailCount string `json:"archived_fail_count"`
+	// 总体信息
+	Total string `json:"total"`
+}
+
+// WalFileInfo结构体构造函数
+func NewWalFileInfo() *WalFileInfo {
+	return &WalFileInfo{}
+}

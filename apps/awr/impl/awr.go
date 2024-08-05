@@ -401,6 +401,43 @@ order by temp_blks_written desc limit 10
 	return comsumeTopSqlSet, nil
 }
 
+// 获取当前数据库聚簇WAL Files信息
+func (i *impl) GetPgWalFileInfo(ctx context.Context) (*awr.WalFileInfo, error) {
+	walFileInfo := awr.NewWalFileInfo()
+	row := i.db.QueryRowContext(ctx, `show archive_mode`)
+	err := row.Scan(&walFileInfo.ArchiveMode)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `SELECT count(*) AS wal_file_count FROM pg_ls_waldir()`)
+	err = row.Scan(&walFileInfo.WalFileCount)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `select archived_count,COALESCE(last_archived_wal,''),COALESCE(last_failed_wal,''),failed_count from pg_stat_archiver`)
+	err = row.Scan(&walFileInfo.ArchivedFileCount, &walFileInfo.LastArchived, &walFileInfo.LastFailure, &walFileInfo.ArchivedFailCount)
+	if err != nil {
+		return nil, err
+	}
+	_, err = i.db.ExecContext(ctx, `DROP TABLE IF EXISTS temp_archiver_stats`)
+	if err != nil {
+		return nil, err
+	}
+	_, err = i.db.ExecContext(ctx, `SELECT now() AS current_time,archived_count AS total_archived INTO temp_archiver_stats FROM pg_stat_archiver`)
+	if err != nil {
+		return nil, err
+	}
+	sql := `SELECT (a.archived_count - t.total_archived) / EXTRACT(EPOCH FROM (now() - t.current_time))/60 AS archive_rate_per_min FROM pg_stat_archiver a,temp_archiver_stats t`
+	row = i.db.QueryRowContext(ctx, sql)
+	err = row.Scan(&walFileInfo.ArchiveRate)
+	if err != nil {
+		return nil, err
+	}
+	walFileInfo.ArchiveRate = fmt.Sprintf("%s per min", walFileInfo.ArchiveRate)
+	walFileInfo.Total = fmt.Sprintf("%s succeeded, %s failed", walFileInfo.ArchivedFileCount, walFileInfo.ArchivedFailCount)
+	return walFileInfo, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)

@@ -44,3 +44,11 @@ func TestGetComsumeTempSql(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(comsumeTopSqlSet))
 }
+
+func TestGetPgWalFileInfo(t *testing.T) {
+	walFileInfo, err := svc.GetPgWalFileInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(walFileInfo))
+}
