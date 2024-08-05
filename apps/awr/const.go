@@ -129,8 +129,6 @@ const AwrTpl = `
 				<th class="awrbg" scope="col">ArchivedFailCount</th>
 				<th class="awrbg" scope="col">Total</th>
 			</tr>
-			{{ range $index, $item := .WalFileInfo }}
-			{{ if eq (mod $index 2) 1 }}
             <tr>
 				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
 				<td scope="row" class="awrc">{{ $item.WalFileCount }}</td>
@@ -141,20 +139,6 @@ const AwrTpl = `
 				<td scope="row" class="awrc">{{ $item.ArchivedFailCount }}</td>
 				<td scope="row" class="awrc">{{ $item.Total }}</td>
             </tr>
-			{{ end }}
-			{{ if eq (mod $index 2) 0 }}
-            <tr>
-				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
-				<td scope="row" class="awrc">{{ $item.WalFileCount }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchivedFileCount }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchiveRate }}</td>
-				<td scope="row" class="awrc">{{ $item.LastArchived }}</td>
-				<td scope="row" class="awrc">{{ $item.LastFailure }}</td>
-				<td scope="row" class="awrc">{{ $item.ArchivedFailCount }}</td>
-				<td scope="row" class="awrc">{{ $item.Total }}</td>
-            </tr>
-			{{ end }}
-			{{ end }}
         </tbody>
     </table>
 	</p>
