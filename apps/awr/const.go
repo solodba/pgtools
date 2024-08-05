@@ -142,6 +142,31 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Walfile Prameter</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql walfile parameter">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">name</th>
+                <th class="awrbg" scope="col">value</th>
+			</tr>
+			{{ range $index, $item := .WalFileInfo.ParamSet.ParamItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>
