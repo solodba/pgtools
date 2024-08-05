@@ -186,9 +186,83 @@ const AwrTpl = `
 			{{ end }}
 			{{ if eq (mod $index 2) 0 }}
             <tr>
-				<td scope="row" class="awrc">{{ $item.LockType }}</td>
-				<td scope="row" class="awrc">{{ $item.Granted }}</td>
-				<td scope="row" class="awrc">{{ $item.Total }}</td>
+				<td scope="row" class="awrnc">{{ $item.LockType }}</td>
+				<td scope="row" class="awrnc">{{ $item.Granted }}</td>
+				<td scope="row" class="awrnc">{{ $item.Total }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Vacuum Progress</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql vacuum progress">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Pid</th>
+                <th class="awrbg" scope="col">Datname</th>
+				<th class="awrbg" scope="col">TableName</th>
+				<th class="awrbg" scope="col">Phase</th>
+				<th class="awrbg" scope="col">HeapBlksTotal</th>
+				<th class="awrbg" scope="col">HeapBlksScanned</th>
+				<th class="awrbg" scope="col">HeapBlksVacuumed</th>
+				<th class="awrbg" scope="col">IndexVacuumCount</th>
+				<th class="awrbg" scope="col">MaxDeadTuples</th>
+				<th class="awrbg" scope="col">NumDeadTuples</th>
+			</tr>
+            {{ range $index, $item := .VacuumInfoSet.VacuumInfoItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Pid }}</td>
+				<td scope="row" class="awrc">{{ $item.Datname }}</td>
+				<td scope="row" class="awrc">{{ $item.TableName }}</td>
+				<td scope="row" class="awrc">{{ $item.Phase }}</td>
+				<td scope="row" class="awrc">{{ $item.HeapBlksTotal }}</td>
+				<td scope="row" class="awrc">{{ $item.HeapBlksScanned }}</td>
+				<td scope="row" class="awrc">{{ $item.HeapBlksVacuumed }}</td>
+				<td scope="row" class="awrc">{{ $item.IndexVacuumCount }}</td>
+				<td scope="row" class="awrc">{{ $item.MaxDeadTuples }}</td>
+				<td scope="row" class="awrc">{{ $item.NumDeadTuples }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Pid }}</td>
+				<td scope="row" class="awrnc">{{ $item.Datname }}</td>
+				<td scope="row" class="awrnc">{{ $item.TableName }}</td>
+				<td scope="row" class="awrnc">{{ $item.Phase }}</td>
+				<td scope="row" class="awrnc">{{ $item.HeapBlksTotal }}</td>
+				<td scope="row" class="awrnc">{{ $item.HeapBlksScanned }}</td>
+				<td scope="row" class="awrnc">{{ $item.HeapBlksVacuumed }}</td>
+				<td scope="row" class="awrnc">{{ $item.IndexVacuumCount }}</td>
+				<td scope="row" class="awrnc">{{ $item.MaxDeadTuples }}</td>
+				<td scope="row" class="awrnc">{{ $item.NumDeadTuples }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Vacuum Parameter</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql vacuum parameter">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">name</th>
+                <th class="awrbg" scope="col">value</th>
+			</tr>
+			{{ range $index, $item := ..VacuumInfoSet.ParamSet.ParamItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Value }}</td>
             </tr>
 			{{ end }}
 			{{ end }}
