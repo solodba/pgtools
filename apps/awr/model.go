@@ -129,7 +129,7 @@ type WalFileInfo struct {
 	// 是否开启归档
 	ArchiveMode string `json:"archive_mode"`
 	// 当前WAL文件总数
-	WalFileCount string `json:"wal_count"`
+	WalFileCount string `json:"wal_file_count"`
 	// 归档WAL文件总数
 	ArchivedFileCount string `json:"archived_file_count"`
 	// WAL文件归档速率

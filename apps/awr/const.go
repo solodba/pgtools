@@ -115,6 +115,49 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Walfile Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql walfile information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">ArchiveMode</th>
+                <th class="awrbg" scope="col">WalFileCount</th>
+				<th class="awrbg" scope="col">ArchivedFileCount</th>
+				<th class="awrbg" scope="col">ArchiveRate</th>
+				<th class="awrbg" scope="col">LastArchived</th>
+				<th class="awrbg" scope="col">LastFailure</th>
+				<th class="awrbg" scope="col">ArchivedFailCount</th>
+				<th class="awrbg" scope="col">Total</th>
+			</tr>
+			{{ range $index, $item := .PgClusterInfo.WalFileInfo }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
+				<td scope="row" class="awrc">{{ $item.WalFileCount }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchivedFileCount }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchiveRate }}</td>
+				<td scope="row" class="awrc">{{ $item.LastArchived }}</td>
+				<td scope="row" class="awrc">{{ $item.LastFailure }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchivedFailCount }}</td>
+				<td scope="row" class="awrc">{{ $item.Total }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.ArchiveMode }}</td>
+				<td scope="row" class="awrc">{{ $item.WalFileCount }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchivedFileCount }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchiveRate }}</td>
+				<td scope="row" class="awrc">{{ $item.LastArchived }}</td>
+				<td scope="row" class="awrc">{{ $item.LastFailure }}</td>
+				<td scope="row" class="awrc">{{ $item.ArchivedFailCount }}</td>
+				<td scope="row" class="awrc">{{ $item.Total }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>
