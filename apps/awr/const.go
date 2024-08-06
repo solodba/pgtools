@@ -342,6 +342,43 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Tablespace Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql tablespace information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Name</th>
+                <th class="awrbg" scope="col">Owner</th>
+				<th class="awrbg" scope="col">Location</th>
+				<th class="awrbg" scope="col">Size</th>
+				<th class="awrbg" scope="col">Disk Used</th>
+				<th class="awrbg" scope="col">Inode Used</th>
+			</tr>
+			{{ range $index, $item := .TablespaceInfoSet.TablespaceInfoItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Owner }}</td>
+				<td scope="row" class="awrc">{{ $item.Location }}</td>
+				<td scope="row" class="awrc">{{ $item.Size }}</td>
+				<td scope="row" class="awrc">{{ $item.DiskUsed }}</td>
+				<td scope="row" class="awrc">{{ $item.InodeUsed }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Owner }}</td>
+				<td scope="row" class="awrnc">{{ $item.Location }}</td>
+				<td scope="row" class="awrnc">{{ $item.Size }}</td>
+				<td scope="row" class="awrnc">{{ $item.DiskUsed }}</td>
+				<td scope="row" class="awrnc">{{ $item.InodeUsed }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>

@@ -84,3 +84,11 @@ func TestGetPgBackendInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(backendInfo))
 }
+
+func TestGetPgTablespaceInfo(t *testing.T) {
+	tablespaceInfoSet, err := svc.GetPgTablespaceInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(tablespaceInfoSet))
+}

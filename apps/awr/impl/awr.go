@@ -630,6 +630,60 @@ func (i *impl) GetPgBackendInfo(ctx context.Context) (*awr.BackendInfo, error) {
 	return backendInfo, nil
 }
 
+// 获取当前表空间信息
+func (i *impl) GetPgTablespaceInfo(ctx context.Context) (*awr.TablespaceInfoSet, error) {
+	rootDiskSize, err := exec.Command("bash", "-c", `df -h / | tail -n +2 |  awk '{print $2}'`).CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	totalInodes, err := exec.Command("bash", "-c", `df -i / | tail -n +2 | awk '{print $2}'`).CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	usedInodes, err := exec.Command("bash", "-c", `df -i / | tail -n +2 | awk '{print $3}'`).CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+	sql := `
+	SELECT
+	spcname "name",
+	pg_get_userbyid(spcowner) "owner",
+	COALESCE(pg_tablespace_location(oid),'') "location",
+	pg_size_pretty(pg_tablespace_size(oid)) "size"
+	FROM pg_tablespace
+	ORDER BY oid ASC`
+	rows, err := i.db.QueryContext(ctx, sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	tablespaceInfoSet := awr.NewTablespaceInfoSet()
+	for rows.Next() {
+		tablespaceInfo := awr.NewTablespaceInfo()
+		err = rows.Scan(&tablespaceInfo.Name, &tablespaceInfo.Owner, &tablespaceInfo.Location, &tablespaceInfo.Size)
+		if err != nil {
+			return nil, err
+		}
+		if tablespaceInfo.Name == "pg_default" || tablespaceInfo.Name == "pg_global" {
+			pgData, err := exec.Command("bash", "-c", `su - postgres -c "echo \$PGDATA"`).CombinedOutput()
+			if err != nil {
+				return nil, err
+			}
+			tablespaceInfo.Location = strings.Trim(string(pgData), "\n")
+		}
+		cmd := fmt.Sprintf(`du -sh %s | awk '{print $1}'`, tablespaceInfo.Location)
+		tbsUsed, err := exec.Command("bash", "-c", cmd).CombinedOutput()
+		if err != nil {
+			return nil, err
+		}
+		tablespaceInfo.DiskUsed = fmt.Sprintf("%s of %s", strings.Trim(string(tbsUsed), "\n"), strings.Trim(string(rootDiskSize), "\n"))
+		tablespaceInfo.InodeUsed = fmt.Sprintf("%s of %s", strings.Trim(string(usedInodes), "\n"), strings.Trim(string(totalInodes), "\n"))
+		tablespaceInfoSet.AddItems(tablespaceInfo)
+	}
+	tablespaceInfoSet.Total = len(tablespaceInfoSet.TablespaceInfoItems)
+	return tablespaceInfoSet, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)
@@ -676,6 +730,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	tablespaceInfoSet, err := i.GetPgTablespaceInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -688,6 +746,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.VacuumInfoSet = vaccumInfoSet
 	awrData.RoleInfoSet = roleInfoSet
 	awrData.BackendInfo = backendInfo
+	awrData.TablespaceInfoSet = tablespaceInfoSet
 	return awrData, nil
 }
 
