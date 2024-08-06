@@ -222,6 +222,44 @@ func (v *VacuumInfoSet) AddItems(items ...*VacuumInfo) {
 	v.VacuumInfoItems = append(v.VacuumInfoItems, items...)
 }
 
+// RoleInfo结构体
+type RoleInfo struct {
+	Name      string `json:"name"`
+	Login     string `json:"login"`
+	Repl      string `json:"repl"`
+	Super     string `json:"super"`
+	CreatRol  string `json:"creat_rol"`
+	CreatDb   string `json:"creat_db"`
+	BypassRls string `json:"bypass_rls"`
+	Inherit   string `json:"inherit"`
+	ConnLimit string `json:"conn_limit"`
+	Expires   string `json:"expires"`
+	MemberOf  string `json:"member_of"`
+}
+
+// RoleInfoSet结构体
+type RoleInfoSet struct {
+	Total         int         `json:"total"`
+	RoleInfoItems []*RoleInfo `json:"role_info_items"`
+}
+
+// RoleInfo结构体构造函数
+func NewRoleInfo() *RoleInfo {
+	return &RoleInfo{}
+}
+
+// RoleInfoSet结构体构造函数
+func NewRoleInfoSet() *RoleInfoSet {
+	return &RoleInfoSet{
+		RoleInfoItems: make([]*RoleInfo, 0),
+	}
+}
+
+// RoleInfoSet结构体添加方法
+func (r *RoleInfoSet) AddItems(items ...*RoleInfo) {
+	r.RoleInfoItems = append(r.RoleInfoItems, items...)
+}
+
 // AwrData结构体
 type AwrData struct {
 	SystemInfo          *SystemInfo       `json:"system_info"`
@@ -233,6 +271,7 @@ type AwrData struct {
 	WalFileInfo         *WalFileInfo      `json:"wal_file_info"`
 	LockInfoSet         *LockInfoSet      `json:"lock_info_set"`
 	VacuumInfoSet       *VacuumInfoSet    `json:"vacuum_info_set"`
+	RoleInfoSet         *RoleInfoSet      `json:"role_info_set"`
 }
 
 // AwrData结构体初始化函数
@@ -247,6 +286,7 @@ func NewAwrData() *AwrData {
 		WalFileInfo:         NewWalFileInfo(),
 		LockInfoSet:         NewLockInfoSet(),
 		VacuumInfoSet:       NewVacuumInfoSet(),
+		RoleInfoSet:         NewRoleInfoSet(),
 	}
 }
 

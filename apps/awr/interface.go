@@ -19,6 +19,8 @@ type Service interface {
 	GetPgLockInfo(context.Context) (*LockInfoSet, error)
 	// 获取当前VACUUM信息
 	GetPgVacuumInfo(context.Context) (*VacuumInfoSet, error)
+	// 获取当前角色信息
+	GetPgRoleInfo(context.Context) (*RoleInfoSet, error)
 	// 获取当前IO消耗TOP 10的SQL
 	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 获取当前耗时TOP 10的SQL

@@ -552,6 +552,53 @@ FROM
 	return vacuumInfoSet, nil
 }
 
+// 获取当前角色信息
+func (i *impl) GetPgRoleInfo(ctx context.Context) (*awr.RoleInfoSet, error) {
+	sql := `
+SELECT
+R.rolname as "Name", 
+R.rolcanlogin as "Login", 
+R.rolreplication as "Repl", 
+R.rolsuper as "Super", 
+R.rolcreaterole as "Creat Rol",
+R.rolcreatedb as "Creat DB", 
+R.rolbypassrls as "Bypass RLS",
+R.rolinherit as "Inherit", 
+R.rolconnlimit as "Conn Limit",
+COALESCE(EXTRACT(EPOCH FROM R.rolvaliduntil), 0) as "Expires",
+ARRAY(SELECT pg_get_userbyid(M.roleid) FROM pg_auth_members AS M WHERE M.member = R.oid) as "Member Of"
+FROM pg_roles AS R
+ORDER BY R.oid ASC`
+	rows, err := i.db.QueryContext(ctx, sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	roleInfoSet := awr.NewRoleInfoSet()
+	for rows.Next() {
+		roleInfo := awr.NewRoleInfo()
+		err = rows.Scan(
+			&roleInfo.Name,
+			&roleInfo.Login,
+			&roleInfo.Repl,
+			&roleInfo.Super,
+			&roleInfo.CreatRol,
+			&roleInfo.CreatDb,
+			&roleInfo.BypassRls,
+			&roleInfo.Inherit,
+			&roleInfo.ConnLimit,
+			&roleInfo.Expires,
+			&roleInfo.MemberOf,
+		)
+		if err != nil {
+			return nil, err
+		}
+		roleInfoSet.AddItems(roleInfo)
+	}
+	roleInfoSet.Total = len(roleInfoSet.RoleInfoItems)
+	return roleInfoSet, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)
@@ -590,6 +637,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	roleInfoSet, err := i.GetPgRoleInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -600,6 +651,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.WalFileInfo = walFileInfo
 	awrData.LockInfoSet = lockInfoSet
 	awrData.VacuumInfoSet = vaccumInfoSet
+	awrData.RoleInfoSet = roleInfoSet
 	return awrData, nil
 }
 

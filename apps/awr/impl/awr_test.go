@@ -68,3 +68,11 @@ func TestGetPgVacuumInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(vacuumInfo))
 }
+
+func TestGetPgRoleInfo(t *testing.T) {
+	roleInfoSet, err := svc.GetPgRoleInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(roleInfoSet))
+}

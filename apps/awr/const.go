@@ -269,6 +269,58 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Role Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql role information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Name</th>
+                <th class="awrbg" scope="col">Login</th>
+				<th class="awrbg" scope="col">Repl</th>
+				<th class="awrbg" scope="col">Super</th>
+				<th class="awrbg" scope="col">Creat Rol</th>
+				<th class="awrbg" scope="col">Creat Db</th>
+				<th class="awrbg" scope="col">Bypass RLS</th>
+				<th class="awrbg" scope="col">Inherit</th>
+				<th class="awrbg" scope="col">Conn Limit</th>
+				<th class="awrbg" scope="col">Expires</th>
+				<th class="awrbg" scope="col">Member Of</th>
+			</tr>
+			{{ range $index, $item := .RoleInfoSet.RoleInfoItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Login }}</td>
+				<td scope="row" class="awrc">{{ $item.Repl }}</td>
+				<td scope="row" class="awrc">{{ $item.Super }}</td>
+				<td scope="row" class="awrc">{{ $item.CreatRol }}</td>
+				<td scope="row" class="awrc">{{ $item.CreatDb }}</td>
+				<td scope="row" class="awrc">{{ $item.BypassRls }}</td>
+				<td scope="row" class="awrc">{{ $item.Inherit }}</td>
+				<td scope="row" class="awrc">{{ $item.ConnLimit }}</td>
+				<td scope="row" class="awrc">{{ $item.Expires }}</td>
+				<td scope="row" class="awrc">{{ $item.MemberOf }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Login }}</td>
+				<td scope="row" class="awrnc">{{ $item.Repl }}</td>
+				<td scope="row" class="awrnc">{{ $item.Super }}</td>
+				<td scope="row" class="awrnc">{{ $item.CreatRol }}</td>
+				<td scope="row" class="awrnc">{{ $item.CreatDb }}</td>
+				<td scope="row" class="awrnc">{{ $item.BypassRls }}</td>
+				<td scope="row" class="awrnc">{{ $item.Inherit }}</td>
+				<td scope="row" class="awrnc">{{ $item.ConnLimit }}</td>
+				<td scope="row" class="awrnc">{{ $item.Expires }}</td>
+				<td scope="row" class="awrnc">{{ $item.MemberOf }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>
