@@ -167,6 +167,27 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Backends Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql backends information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">max connections</th>
+				<th class="awrbg" scope="col">total backends</th>
+                <th class="awrbg" scope="col">watting on locks</th>
+				<th class="awrbg" scope="col">xact too long</th>
+				<th class="awrbg" scope="col">idle in xact</th>
+			</tr>
+			 <tr>
+				<td scope="row" class="awrc">{{ .BackendInfo.MaxConnect }}</td>
+				<td scope="row" class="awrc">{{ .BackendInfo.TotalBackends }}</td>
+				<td scope="row" class="awrc">{{ .BackendInfo.WaitOnLocks }}</td>
+				<td scope="row" class="awrc">{{ .BackendInfo.LongXact }}</td>
+				<td scope="row" class="awrc">{{ .BackendInfo.IdleInXact }}</td>
+            </tr>
+        </tbody>
+    </table>
+	</p>
 	<h2 class="awr"><a class="awr" name="99999"></a>Lock Information</h2>
 	<p>
 	<table border="0" width="800" class="tdiff" summary="This table displays postgresql lock information">

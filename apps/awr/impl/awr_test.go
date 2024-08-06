@@ -76,3 +76,11 @@ func TestGetPgRoleInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(roleInfoSet))
 }
+
+func TestGetPgBackendInfo(t *testing.T) {
+	backendInfo, err := svc.GetPgBackendInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(backendInfo))
+}

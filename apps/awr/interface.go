@@ -21,6 +21,8 @@ type Service interface {
 	GetPgVacuumInfo(context.Context) (*VacuumInfoSet, error)
 	// 获取当前角色信息
 	GetPgRoleInfo(context.Context) (*RoleInfoSet, error)
+	// 获取当前后端会话信息
+	GetPgBackendInfo(context.Context) (*BackendInfo, error)
 	// 获取当前IO消耗TOP 10的SQL
 	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 获取当前耗时TOP 10的SQL

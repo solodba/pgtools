@@ -260,6 +260,20 @@ func (r *RoleInfoSet) AddItems(items ...*RoleInfo) {
 	r.RoleInfoItems = append(r.RoleInfoItems, items...)
 }
 
+// BackendInfo结构体
+type BackendInfo struct {
+	MaxConnect    string `json:"max_connect"`
+	TotalBackends string `json:"total_backends"`
+	WaitOnLocks   string `json:"wait_on_locks"`
+	LongXact      string `json:"long_xact"`
+	IdleInXact    string `json:"idle_in_xact"`
+}
+
+// BackendInfo结构体构造函数
+func NewBackendInfo() *BackendInfo {
+	return &BackendInfo{}
+}
+
 // AwrData结构体
 type AwrData struct {
 	SystemInfo          *SystemInfo       `json:"system_info"`
@@ -272,6 +286,7 @@ type AwrData struct {
 	LockInfoSet         *LockInfoSet      `json:"lock_info_set"`
 	VacuumInfoSet       *VacuumInfoSet    `json:"vacuum_info_set"`
 	RoleInfoSet         *RoleInfoSet      `json:"role_info_set"`
+	BackendInfo         *BackendInfo      `json:"backend_info"`
 }
 
 // AwrData结构体初始化函数
@@ -287,6 +302,7 @@ func NewAwrData() *AwrData {
 		LockInfoSet:         NewLockInfoSet(),
 		VacuumInfoSet:       NewVacuumInfoSet(),
 		RoleInfoSet:         NewRoleInfoSet(),
+		BackendInfo:         NewBackendInfo(),
 	}
 }
 

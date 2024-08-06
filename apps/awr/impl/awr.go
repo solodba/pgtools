@@ -599,6 +599,37 @@ ORDER BY R.oid ASC`
 	return roleInfoSet, nil
 }
 
+// 获取当前后端会话信息
+func (i *impl) GetPgBackendInfo(ctx context.Context) (*awr.BackendInfo, error) {
+	backendInfo := awr.NewBackendInfo()
+	row := i.db.QueryRowContext(ctx, `show max_connections`)
+	err := row.Scan(&backendInfo.MaxConnect)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `select count(*) from pg_stat_activity`)
+	err = row.Scan(&backendInfo.TotalBackends)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `select count(*) from pg_stat_activity where wait_event_type='Lock'`)
+	err = row.Scan(&backendInfo.WaitOnLocks)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `select count(*) from pg_stat_activity WHERE xact_start IS NOT NULL AND (now() - query_start) > interval '10 minutes'`)
+	err = row.Scan(&backendInfo.LongXact)
+	if err != nil {
+		return nil, err
+	}
+	row = i.db.QueryRowContext(ctx, `select count(*) from pg_stat_activity where state='idle'`)
+	err = row.Scan(&backendInfo.IdleInXact)
+	if err != nil {
+		return nil, err
+	}
+	return backendInfo, nil
+}
+
 // 生成AWR数据
 func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	systemInfo, err := i.GetSystemInfo(ctx)
@@ -641,6 +672,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	backendInfo, err := i.GetPgBackendInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -652,6 +687,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.LockInfoSet = lockInfoSet
 	awrData.VacuumInfoSet = vaccumInfoSet
 	awrData.RoleInfoSet = roleInfoSet
+	awrData.BackendInfo = backendInfo
 	return awrData, nil
 }
 
