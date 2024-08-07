@@ -379,6 +379,86 @@ const AwrTpl = `
         </tbody>
     </table>
 	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>Database Information</h2>
+	{{ range $index, $item := .DbInfoSet.DbInfoItems }}
+	<h3 class="awr"><a class="awr" name="99999"></a>DB #{{ $index }}: {{ .Name }}</h3>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql database information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Name</th>
+                <th class="awrbg" scope="col">Owner</th>
+				<th class="awrbg" scope="col">Tablespace</th>
+				<th class="awrbg" scope="col">Connections</th>
+				<th class="awrbg" scope="col">FrozenXidAge</th>
+				<th class="awrbg" scope="col">Transactions</th>
+				<th class="awrbg" scope="col">CacheHits</th>
+				<th class="awrbg" scope="col">RowsChanged</th>
+				<th class="awrbg" scope="col">TotalTemp</th>
+				<th class="awrbg" scope="col">Problems</th>
+				<th class="awrbg" scope="col">Size</th>
+			</tr>
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Owner }}</td>
+				<td scope="row" class="awrc">{{ $item.Tablespace }}</td>
+				<td scope="row" class="awrc">{{ $item.Connections }}</td>
+				<td scope="row" class="awrc">{{ $item.FrozenXidAge }}</td>
+				<td scope="row" class="awrc">{{ $item.Transactions }}</td>
+				<td scope="row" class="awrc">{{ $item.CacheHits }}</td>
+				<td scope="row" class="awrc">{{ $item.RowsChanged }}</td>
+				<td scope="row" class="awrc">{{ $item.TotalTemp }}</td>
+				<td scope="row" class="awrc">{{ $item.Problems }}</td>
+				<td scope="row" class="awrc">{{ $item.Size }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+			<tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Owner }}</td>
+				<td scope="row" class="awrnc">{{ $item.Tablespace }}</td>
+				<td scope="row" class="awrnc">{{ $item.Connections }}</td>
+				<td scope="row" class="awrnc">{{ $item.FrozenXidAge }}</td>
+				<td scope="row" class="awrnc">{{ $item.Transactions }}</td>
+				<td scope="row" class="awrnc">{{ $item.CacheHits }}</td>
+				<td scope="row" class="awrnc">{{ $item.RowsChanged }}</td>
+				<td scope="row" class="awrnc">{{ $item.TotalTemp }}</td>
+				<td scope="row" class="awrnc">{{ $item.Problems }}</td>
+				<td scope="row" class="awrnc">{{ $item.Size }}</td>
+            </tr>
+			{{ end }}
+        </tbody>
+    </table>
+	<h2 class="awr"><a class="awr" name="99999"></a>DB Extension</h2>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql extension information">
+		<tbody>
+            <tr>
+                <th class="awrbg" scope="col">Name</th>
+                <th class="awrbg" scope="col">DefaultVersion</th>
+				<th class="awrbg" scope="col">InstalledVersion</th>
+				<th class="awrbg" scope="col">Comment</th>
+			</tr>
+			{{ range $index1, $item1 := $item.InstalledExtensionSet.InstalledExtensionItems }}
+			{{ if eq (mod $index1 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item1.Name }}</td>
+				<td scope="row" class="awrc">{{ $item1.DefaultVersion }}</td>
+				<td scope="row" class="awrc">{{ $item1.InstalledVersion }}</td>
+				<td scope="row" class="awrc">{{ $item1.Comment }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index1 2) 0 }}
+			<tr>
+				<td scope="row" class="awrnc">{{ $item1.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item1.DefaultVersion }}</td>
+				<td scope="row" class="awrnc">{{ $item1.InstalledVersion }}</td>
+				<td scope="row" class="awrnc">{{ $item1.Comment }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+	</table>
+	{{ end }}
 	<h2 class="awr">SQL Statistics</h2>
 	<ul>
 		<li class="awr"><a class="awr" href="#550">SQL ordered by User I/O</a></li>

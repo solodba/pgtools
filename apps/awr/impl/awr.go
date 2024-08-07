@@ -710,12 +710,12 @@ func (i *impl) GetPgDbInfo(ctx context.Context) (*awr.DbInfoSet, error) {
 	for _, dbname := range dbList {
 		dbInfo := awr.NewDbInfo()
 		sql := `select
-datname "Name",
-pg_get_userbyid(datdba) "Owner",
-dattablespace "Tablespace",
-datfrozenxid "FrozenXidAge"
-from pg_database
-where datname=$1`
+d.datname "Name",
+pg_get_userbyid(d.datdba) "Owner",
+t.spcname "Tablespace",
+d.datfrozenxid "FrozenXidAge"
+from pg_database d,pg_tablespace t
+where d.dattablespace=t.oid and d.datname=$1`
 		row := i.db.QueryRowContext(ctx, sql, dbname)
 		err = row.Scan(&dbInfo.Name, &dbInfo.Owner, &dbInfo.Tablespace, &dbInfo.FrozenXidAge)
 		if err != nil {
