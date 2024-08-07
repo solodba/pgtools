@@ -307,22 +307,6 @@ func (t *TablespaceInfoSet) AddItems(items ...*TablespaceInfo) {
 	t.TablespaceInfoItems = append(t.TablespaceInfoItems, items...)
 }
 
-// AwrData结构体
-type AwrData struct {
-	SystemInfo          *SystemInfo        `json:"system_info"`
-	PgClusterInfo       *PgClusterInfo     `json:"pg_cluster_info"`
-	ComsumeIoSqlSet     *ComsumeTopSqlSet  `json:"comsume_io_sql_set"`
-	ComsumeTimeSqlSet   *ComsumeTopSqlSet  `json:"comsume_time_sql_set"`
-	ComsumeBufferSqlSet *ComsumeTopSqlSet  `json:"comsume_buffer_sql_set"`
-	ComsumeTempSqlSet   *ComsumeTopSqlSet  `json:"comsume_temp_sql_set"`
-	WalFileInfo         *WalFileInfo       `json:"wal_file_info"`
-	LockInfoSet         *LockInfoSet       `json:"lock_info_set"`
-	VacuumInfoSet       *VacuumInfoSet     `json:"vacuum_info_set"`
-	RoleInfoSet         *RoleInfoSet       `json:"role_info_set"`
-	BackendInfo         *BackendInfo       `json:"backend_info"`
-	TablespaceInfoSet   *TablespaceInfoSet `json:"tablespace_info_set"`
-}
-
 // DbInfo结构体
 type DbInfo struct {
 	Name                  string                 `json:"name"`
@@ -395,6 +379,23 @@ func (d *DbInfoSet) AddItems(items ...*DbInfo) {
 	d.DbInfoItems = append(d.DbInfoItems, items...)
 }
 
+// AwrData结构体
+type AwrData struct {
+	SystemInfo          *SystemInfo        `json:"system_info"`
+	PgClusterInfo       *PgClusterInfo     `json:"pg_cluster_info"`
+	ComsumeIoSqlSet     *ComsumeTopSqlSet  `json:"comsume_io_sql_set"`
+	ComsumeTimeSqlSet   *ComsumeTopSqlSet  `json:"comsume_time_sql_set"`
+	ComsumeBufferSqlSet *ComsumeTopSqlSet  `json:"comsume_buffer_sql_set"`
+	ComsumeTempSqlSet   *ComsumeTopSqlSet  `json:"comsume_temp_sql_set"`
+	WalFileInfo         *WalFileInfo       `json:"wal_file_info"`
+	LockInfoSet         *LockInfoSet       `json:"lock_info_set"`
+	VacuumInfoSet       *VacuumInfoSet     `json:"vacuum_info_set"`
+	RoleInfoSet         *RoleInfoSet       `json:"role_info_set"`
+	BackendInfo         *BackendInfo       `json:"backend_info"`
+	TablespaceInfoSet   *TablespaceInfoSet `json:"tablespace_info_set"`
+	DbInfoSet           *DbInfoSet         `json:"db_info_set"`
+}
+
 // AwrData结构体初始化函数
 func NewAwrData() *AwrData {
 	return &AwrData{
@@ -410,6 +411,7 @@ func NewAwrData() *AwrData {
 		RoleInfoSet:         NewRoleInfoSet(),
 		BackendInfo:         NewBackendInfo(),
 		TablespaceInfoSet:   NewTablespaceInfoSet(),
+		DbInfoSet:           NewDbInfoSet(),
 	}
 }
 

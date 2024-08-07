@@ -848,6 +848,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	dbInfoSet, err := i.GetPgDbInfo(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
@@ -861,6 +865,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.RoleInfoSet = roleInfoSet
 	awrData.BackendInfo = backendInfo
 	awrData.TablespaceInfoSet = tablespaceInfoSet
+	awrData.DbInfoSet = dbInfoSet
 	return awrData, nil
 }
 
