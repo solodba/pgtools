@@ -323,6 +323,78 @@ type AwrData struct {
 	TablespaceInfoSet   *TablespaceInfoSet `json:"tablespace_info_set"`
 }
 
+// DbInfo结构体
+type DbInfo struct {
+	Name                  string                 `json:"name"`
+	Owner                 string                 `json:"owner"`
+	Tablespace            string                 `json:"tablespace"`
+	Connections           string                 `json:"connections"`
+	FrozenXidAge          string                 `json:"frozen_xid_age"`
+	Transactions          string                 `json:"transactions"`
+	CacheHits             string                 `json:"cache_hits"`
+	RowsChanged           string                 `json:"rows_changed"`
+	TotalTemp             string                 `json:"total_temp"`
+	Problems              string                 `json:"problems"`
+	Size                  string                 `json:"size"`
+	InstalledExtensionSet *InstalledExtensionSet `json:"installed_extension_set"`
+}
+
+// InstalledExtension结构体
+type InstalledExtension struct {
+	Name             string `json:"name"`
+	DefaultVersion   string `json:"default_version"`
+	InstalledVersion string `json:"installed_version"`
+	Comment          string `json:"comment"`
+}
+
+// InstalledExtensionSet结构体
+type InstalledExtensionSet struct {
+	Total                   int                   `json:"total"`
+	InstalledExtensionItems []*InstalledExtension `json:"installed_extension_items"`
+}
+
+// InstalledExtension结构体构造函数
+func NewInstalledExtension() *InstalledExtension {
+	return &InstalledExtension{}
+}
+
+// InstalledExtensionSet结构体构造函数
+func NewInstalledExtensionSet() *InstalledExtensionSet {
+	return &InstalledExtensionSet{
+		InstalledExtensionItems: make([]*InstalledExtension, 0),
+	}
+}
+
+// InstalledExtensionSet结构体添加方法
+func (i *InstalledExtensionSet) AddItems(items ...*InstalledExtension) {
+	i.InstalledExtensionItems = append(i.InstalledExtensionItems, items...)
+}
+
+// DbInfoSet结构体
+type DbInfoSet struct {
+	Total       int       `json:"total"`
+	DbInfoItems []*DbInfo `json:"db_info_items"`
+}
+
+// DbInfo结构体构造函数
+func NewDbInfo() *DbInfo {
+	return &DbInfo{
+		InstalledExtensionSet: NewInstalledExtensionSet(),
+	}
+}
+
+// DbInfoSet结构体构造函数
+func NewDbInfoSet() *DbInfoSet {
+	return &DbInfoSet{
+		DbInfoItems: make([]*DbInfo, 0),
+	}
+}
+
+// DbInfoSet结构体添加方法
+func (d *DbInfoSet) AddItems(items ...*DbInfo) {
+	d.DbInfoItems = append(d.DbInfoItems, items...)
+}
+
 // AwrData结构体初始化函数
 func NewAwrData() *AwrData {
 	return &AwrData{

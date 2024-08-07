@@ -92,3 +92,11 @@ func TestGetPgTablespaceInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(tablespaceInfoSet))
 }
+
+func TestGetPgDbInfo(t *testing.T) {
+	dbInfoSet, err := svc.GetPgDbInfo(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(dbInfoSet))
+}

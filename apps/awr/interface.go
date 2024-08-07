@@ -25,6 +25,8 @@ type Service interface {
 	GetPgBackendInfo(context.Context) (*BackendInfo, error)
 	// 获取当前表空间信息
 	GetPgTablespaceInfo(context.Context) (*TablespaceInfoSet, error)
+	// 获取当前所有数据库信息
+	GetPgDbInfo(context.Context) (*DbInfoSet, error)
 	// 获取当前IO消耗TOP 10的SQL
 	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
 	// 获取当前耗时TOP 10的SQL

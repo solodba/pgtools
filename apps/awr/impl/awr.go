@@ -677,11 +677,125 @@ func (i *impl) GetPgTablespaceInfo(ctx context.Context) (*awr.TablespaceInfoSet,
 			return nil, err
 		}
 		tablespaceInfo.DiskUsed = fmt.Sprintf("%s of %s", strings.Trim(string(tbsUsed), "\n"), strings.Trim(string(rootDiskSize), "\n"))
-		tablespaceInfo.InodeUsed = fmt.Sprintf("%s of %s", strings.Trim(string(usedInodes), "\n"), strings.Trim(string(totalInodes), "\n"))
+		tablespaceInfo.InodeUsed = fmt.Sprintf("%s of %s", strings.Trim(string(usedInodes), "\n"), strings.Trim(
+			string(totalInodes),
+			"\n",
+		))
 		tablespaceInfoSet.AddItems(tablespaceInfo)
 	}
 	tablespaceInfoSet.Total = len(tablespaceInfoSet.TablespaceInfoItems)
 	return tablespaceInfoSet, nil
+}
+
+// 获取当前所有数据库信息
+func (i *impl) GetPgDbInfo(ctx context.Context) (*awr.DbInfoSet, error) {
+	dbList := make([]string, 0)
+	rows, err := i.db.QueryContext(ctx, `select distinct(datname) from pg_database`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var dbname string
+		err = rows.Scan(&dbname)
+		if err != nil {
+			return nil, err
+		}
+		if (dbname == "template0") || (dbname == "template1") {
+			continue
+		}
+		dbList = append(dbList, dbname)
+	}
+	dbInfoSet := awr.NewDbInfoSet()
+	for _, dbname := range dbList {
+		dbInfo := awr.NewDbInfo()
+		sql := `select
+datname "Name",
+pg_get_userbyid(datdba) "Owner",
+dattablespace "Tablespace",
+datfrozenxid "FrozenXidAge"
+from pg_database
+where datname=$1`
+		row := i.db.QueryRowContext(ctx, sql, dbname)
+		err = row.Scan(&dbInfo.Name, &dbInfo.Owner, &dbInfo.Tablespace, &dbInfo.FrozenXidAge)
+		if err != nil {
+			return nil, err
+		}
+		sql = `select 
+numbackends "Connections",
+xact_commit "XactCommit",
+xact_rollback "XactRollback",
+tup_inserted "TupInserted",
+tup_updated "TupUpdated",
+tup_deleted "TupDeleted",
+temp_files "TempFiles",
+temp_bytes "TempBytes",
+deadlocks "DeadLocks",
+conflicts "Conflicts",
+round((blks_hit::numeric  / (blks_hit::numeric  + blks_read::numeric))*100,2) || '%' AS "CacheHits"
+from pg_stat_database
+where datname=$1`
+		var xactCommit,
+			xactRollback,
+			tupInserted,
+			tupUpdated,
+			tupDeleted,
+			tempFiles, tempBytes,
+			deadLocks,
+			conflicts string
+		row = i.db.QueryRowContext(ctx, sql, dbname)
+		row.Scan(
+			&dbInfo.Connections,
+			&xactCommit,
+			&xactRollback,
+			&tupInserted,
+			&tupUpdated,
+			&tupDeleted,
+			&tempFiles,
+			&tempBytes,
+			&deadLocks,
+			&conflicts,
+			&dbInfo.CacheHits,
+		)
+		dbInfo.Transactions = fmt.Sprintf("%s commits, %s rollbacks", xactCommit, xactRollback)
+		dbInfo.RowsChanged = fmt.Sprintf("ins %s, upd %s, del %s", tupInserted, tupUpdated, tupDeleted)
+		dbInfo.TotalTemp = fmt.Sprintf("%s B in %s files", tempBytes, tempFiles)
+		dbInfo.Problems = fmt.Sprintf("%s deadlocks, %s conflicts", deadLocks, conflicts)
+		sql = `select pg_size_pretty(pg_database_size($1))`
+		row = i.db.QueryRowContext(ctx, sql, dbname)
+		err = row.Scan(&dbInfo.Size)
+		if err != nil {
+			return nil, err
+		}
+		sql = `select
+e.extname,
+v.default_version,
+v.installed_version,
+v.comment
+from pg_extension e,pg_available_extensions v
+where e.extname=v.name`
+		installedExtensionSet := awr.NewInstalledExtensionSet()
+		rows, err = i.db.QueryContext(ctx, sql)
+		if err != nil {
+			return nil, err
+		}
+		defer rows.Close()
+		for rows.Next() {
+			installedExtension := awr.NewInstalledExtension()
+			rows.Scan(
+				&installedExtension.Name,
+				&installedExtension.DefaultVersion,
+				&installedExtension.InstalledVersion,
+				&installedExtension.Comment,
+			)
+			installedExtensionSet.AddItems(installedExtension)
+		}
+		installedExtensionSet.Total = len(installedExtensionSet.InstalledExtensionItems)
+		dbInfo.InstalledExtensionSet = installedExtensionSet
+		dbInfoSet.AddItems(dbInfo)
+	}
+	dbInfoSet.Total = len(dbInfoSet.DbInfoItems)
+	return dbInfoSet, nil
 }
 
 // 生成AWR数据
