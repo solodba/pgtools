@@ -3,6 +3,7 @@ package impl_test
 import (
 	"testing"
 
+	"github.com/solodba/pgtools/apps/awr"
 	"github.com/solodba/pgtools/test/tools"
 )
 
@@ -14,7 +15,9 @@ func TestGetSystemInfo(t *testing.T) {
 }
 
 func TestGetComsumeIoSql(t *testing.T) {
-	comsumeTopSqlSet, err := svc.GetComsumeIoSql(ctx)
+	queryTopSqlArgs := awr.NewQueryTopSqlArgs()
+	queryTopSqlArgs.DbName = "testdb"
+	comsumeTopSqlSet, err := svc.GetComsumeIoSql(ctx, queryTopSqlArgs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,7 +25,9 @@ func TestGetComsumeIoSql(t *testing.T) {
 }
 
 func TestGetComsumeTimeSql(t *testing.T) {
-	comsumeTopSqlSet, err := svc.GetComsumeTimeSql(ctx)
+	queryTopSqlArgs := awr.NewQueryTopSqlArgs()
+	queryTopSqlArgs.DbName = "postgres"
+	comsumeTopSqlSet, err := svc.GetComsumeTimeSql(ctx, queryTopSqlArgs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +35,9 @@ func TestGetComsumeTimeSql(t *testing.T) {
 }
 
 func TestGetComsumeBufferSql(t *testing.T) {
-	comsumeTopSqlSet, err := svc.GetComsumeBufferSql(ctx)
+	queryTopSqlArgs := awr.NewQueryTopSqlArgs()
+	queryTopSqlArgs.DbName = "postgres"
+	comsumeTopSqlSet, err := svc.GetComsumeBufferSql(ctx, queryTopSqlArgs)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -38,11 +45,21 @@ func TestGetComsumeBufferSql(t *testing.T) {
 }
 
 func TestGetComsumeTempSql(t *testing.T) {
-	comsumeTopSqlSet, err := svc.GetComsumeTempSql(ctx)
+	queryTopSqlArgs := awr.NewQueryTopSqlArgs()
+	queryTopSqlArgs.DbName = "postgres"
+	comsumeTopSqlSet, err := svc.GetComsumeTempSql(ctx, queryTopSqlArgs)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(tools.MustToJson(comsumeTopSqlSet))
+}
+
+func TestGetComsumeTopSql(t *testing.T) {
+	comsumeTopSqlTotalSet, err := svc.GetComsumeTopSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeTopSqlTotalSet))
 }
 
 func TestGetPgWalFileInfo(t *testing.T) {

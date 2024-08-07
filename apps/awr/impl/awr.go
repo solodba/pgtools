@@ -162,7 +162,7 @@ func (i *impl) GetPgClusterInfo(ctx context.Context) (*awr.PgClusterInfo, error)
 }
 
 // 获取当前IO消耗TOP 10的SQL
-func (i *impl) GetComsumeIoSql(ctx context.Context) (*awr.ComsumeTopSqlSet, error) {
+func (i *impl) GetComsumeIoSql(ctx context.Context, queryTopSqlArgs *awr.QueryTopSqlArgs) (*awr.ComsumeTopSqlSet, error) {
 	sql := `
 select 
 userid::regrole,
@@ -181,10 +181,11 @@ temp_blks_written,
 blk_read_time,
 blk_write_time,
 query
-from pg_stat_statements
+from pg_stat_statements,pg_database
+where dbid=oid and datname=$1
 order by (blk_read_time+blk_write_time)/calls desc limit 10
 `
-	rows, err := i.db.QueryContext(ctx, sql)
+	rows, err := i.db.QueryContext(ctx, sql, queryTopSqlArgs.DbName)
 	if err != nil {
 		return nil, err
 	}
@@ -217,12 +218,14 @@ order by (blk_read_time+blk_write_time)/calls desc limit 10
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
+	comsumeTopSqlSet.DbName = queryTopSqlArgs.DbName
+	comsumeTopSqlSet.Type = "SQL ordered by User I/O"
 	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
 	return comsumeTopSqlSet, nil
 }
 
 // 获取当前耗时TOP 10的SQL
-func (i *impl) GetComsumeTimeSql(ctx context.Context) (*awr.ComsumeTopSqlSet, error) {
+func (i *impl) GetComsumeTimeSql(ctx context.Context, queryTopSqlArgs *awr.QueryTopSqlArgs) (*awr.ComsumeTopSqlSet, error) {
 	sql := `
 select 
 userid::regrole,
@@ -241,10 +244,11 @@ temp_blks_written,
 blk_read_time,
 blk_write_time,
 query
-from pg_stat_statements
+from pg_stat_statements,pg_database
+where dbid=oid and datname=$1
 order by total_exec_time desc limit 10
 `
-	rows, err := i.db.QueryContext(ctx, sql)
+	rows, err := i.db.QueryContext(ctx, sql, queryTopSqlArgs.DbName)
 	if err != nil {
 		return nil, err
 	}
@@ -277,12 +281,14 @@ order by total_exec_time desc limit 10
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
+	comsumeTopSqlSet.DbName = queryTopSqlArgs.DbName
+	comsumeTopSqlSet.Type = "SQL ordered by Elapsed Time"
 	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
 	return comsumeTopSqlSet, nil
 }
 
 // 获取当前消耗Buffer TOP 10的SQL
-func (i *impl) GetComsumeBufferSql(ctx context.Context) (*awr.ComsumeTopSqlSet, error) {
+func (i *impl) GetComsumeBufferSql(ctx context.Context, queryTopSqlArgs *awr.QueryTopSqlArgs) (*awr.ComsumeTopSqlSet, error) {
 	sql := `
 select 
 userid::regrole,
@@ -301,10 +307,11 @@ temp_blks_written,
 blk_read_time,
 blk_write_time,
 query
-from pg_stat_statements
+from pg_stat_statements,pg_database
+where dbid=oid and datname=$1
 order by (shared_blks_hit+shared_blks_dirtied) desc limit 10
 `
-	rows, err := i.db.QueryContext(ctx, sql)
+	rows, err := i.db.QueryContext(ctx, sql, queryTopSqlArgs.DbName)
 	if err != nil {
 		return nil, err
 	}
@@ -337,12 +344,14 @@ order by (shared_blks_hit+shared_blks_dirtied) desc limit 10
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
+	comsumeTopSqlSet.DbName = queryTopSqlArgs.DbName
+	comsumeTopSqlSet.Type = "SQL ordered by Shared Buffer"
 	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
 	return comsumeTopSqlSet, nil
 }
 
 // 获取当前消耗temp空间的SQL
-func (i *impl) GetComsumeTempSql(ctx context.Context) (*awr.ComsumeTopSqlSet, error) {
+func (i *impl) GetComsumeTempSql(ctx context.Context, queryTopSqlArgs *awr.QueryTopSqlArgs) (*awr.ComsumeTopSqlSet, error) {
 	sql := `
 select 
 userid::regrole,
@@ -361,10 +370,11 @@ temp_blks_written,
 blk_read_time,
 blk_write_time,
 query
-from pg_stat_statements
+from pg_stat_statements,pg_database
+where dbid=oid and datname=$1
 order by temp_blks_written desc limit 10
 `
-	rows, err := i.db.QueryContext(ctx, sql)
+	rows, err := i.db.QueryContext(ctx, sql, queryTopSqlArgs.DbName)
 	if err != nil {
 		return nil, err
 	}
@@ -397,8 +407,54 @@ order by temp_blks_written desc limit 10
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
+	comsumeTopSqlSet.DbName = queryTopSqlArgs.DbName
+	comsumeTopSqlSet.Type = "SQL ordered by Temp"
 	comsumeTopSqlSet.Total = len(comsumeTopSqlSet.ComsumeTopSqlItems)
 	return comsumeTopSqlSet, nil
+}
+
+// 获取当前各种消耗Top 10的SQL
+func (i *impl) GetComsumeTopSql(ctx context.Context) (*awr.ComsumeTopSqlTotalSet, error) {
+	dbList := make([]string, 0)
+	rows, err := i.db.QueryContext(ctx, `select distinct(datname) from pg_database`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var dbname string
+		err = rows.Scan(&dbname)
+		if err != nil {
+			return nil, err
+		}
+		if (dbname == "template0") || (dbname == "template1") {
+			continue
+		}
+		dbList = append(dbList, dbname)
+	}
+	comsumeTopSqlTotalSet := awr.NewComsumeTopSqlTotalSet()
+	for _, dbname := range dbList {
+		queryTopSqlArgs := awr.NewQueryTopSqlArgs()
+		queryTopSqlArgs.DbName = dbname
+		comsumeIoSqlSet, err := i.GetComsumeIoSql(ctx, queryTopSqlArgs)
+		if err != nil {
+			return nil, err
+		}
+		comsumeTimeSqlSet, err := i.GetComsumeTimeSql(ctx, queryTopSqlArgs)
+		if err != nil {
+			return nil, err
+		}
+		comsumeBufferSqlSet, err := i.GetComsumeBufferSql(ctx, queryTopSqlArgs)
+		if err != nil {
+			return nil, err
+		}
+		comsumeTempSqlSet, err := i.GetComsumeTempSql(ctx, queryTopSqlArgs)
+		if err != nil {
+			return nil, err
+		}
+		comsumeTopSqlTotalSet.AddItems(comsumeIoSqlSet, comsumeTimeSqlSet, comsumeBufferSqlSet, comsumeTempSqlSet)
+	}
+	return comsumeTopSqlTotalSet, nil
 }
 
 // 获取当前数据库聚簇WAL Files信息
@@ -808,19 +864,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
-	comsumeIoSqlSet, err := i.GetComsumeIoSql(ctx)
-	if err != nil {
-		return nil, err
-	}
-	comsumeTimeSqlSet, err := i.GetComsumeTimeSql(ctx)
-	if err != nil {
-		return nil, err
-	}
-	comsumeBufferSqlSet, err := i.GetComsumeBufferSql(ctx)
-	if err != nil {
-		return nil, err
-	}
-	comsumeTempSqlSet, err := i.GetComsumeTempSql(ctx)
+	comsumeTopSqlTotalSet, err := i.GetComsumeTopSql(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -855,10 +899,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
-	awrData.ComsumeIoSqlSet = comsumeIoSqlSet
-	awrData.ComsumeTimeSqlSet = comsumeTimeSqlSet
-	awrData.ComsumeBufferSqlSet = comsumeBufferSqlSet
-	awrData.ComsumeTempSqlSet = comsumeTempSqlSet
+	awrData.ComsumeTopSqlTotalSet = comsumeTopSqlTotalSet
 	awrData.WalFileInfo = walFileInfo
 	awrData.LockInfoSet = lockInfoSet
 	awrData.VacuumInfoSet = vaccumInfoSet

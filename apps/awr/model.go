@@ -104,6 +104,8 @@ type ComsumeTopSql struct {
 // ComsumeTopSqlSet结构体
 type ComsumeTopSqlSet struct {
 	Total              int              `json:"total"`
+	DbName             string           `json:"dbname"`
+	Type               string           `json:"type"`
 	ComsumeTopSqlItems []*ComsumeTopSql `json:"comsume_top_sql_items"`
 }
 
@@ -122,6 +124,23 @@ func NewComsumeTopSqlSet() *ComsumeTopSqlSet {
 // ComsumeTopSqlSet结构体添加方法
 func (c *ComsumeTopSqlSet) AddItems(items ...*ComsumeTopSql) {
 	c.ComsumeTopSqlItems = append(c.ComsumeTopSqlItems, items...)
+}
+
+// ComsumeTopSqlTotalSet结构体
+type ComsumeTopSqlTotalSet struct {
+	ComsumeTopSqlSetItems []*ComsumeTopSqlSet `json:"comsume_top_sql_set_items"`
+}
+
+// ComsumeTopSqlTotalSet结构体构造函数
+func NewComsumeTopSqlTotalSet() *ComsumeTopSqlTotalSet {
+	return &ComsumeTopSqlTotalSet{
+		ComsumeTopSqlSetItems: make([]*ComsumeTopSqlSet, 0),
+	}
+}
+
+// ComsumeTopSqlTotalSet结构体添加方法
+func (c *ComsumeTopSqlTotalSet) AddItems(items ...*ComsumeTopSqlSet) {
+	c.ComsumeTopSqlSetItems = append(c.ComsumeTopSqlSetItems, items...)
 }
 
 // WalFileInfo结构体
@@ -381,37 +400,31 @@ func (d *DbInfoSet) AddItems(items ...*DbInfo) {
 
 // AwrData结构体
 type AwrData struct {
-	SystemInfo          *SystemInfo        `json:"system_info"`
-	PgClusterInfo       *PgClusterInfo     `json:"pg_cluster_info"`
-	ComsumeIoSqlSet     *ComsumeTopSqlSet  `json:"comsume_io_sql_set"`
-	ComsumeTimeSqlSet   *ComsumeTopSqlSet  `json:"comsume_time_sql_set"`
-	ComsumeBufferSqlSet *ComsumeTopSqlSet  `json:"comsume_buffer_sql_set"`
-	ComsumeTempSqlSet   *ComsumeTopSqlSet  `json:"comsume_temp_sql_set"`
-	WalFileInfo         *WalFileInfo       `json:"wal_file_info"`
-	LockInfoSet         *LockInfoSet       `json:"lock_info_set"`
-	VacuumInfoSet       *VacuumInfoSet     `json:"vacuum_info_set"`
-	RoleInfoSet         *RoleInfoSet       `json:"role_info_set"`
-	BackendInfo         *BackendInfo       `json:"backend_info"`
-	TablespaceInfoSet   *TablespaceInfoSet `json:"tablespace_info_set"`
-	DbInfoSet           *DbInfoSet         `json:"db_info_set"`
+	SystemInfo            *SystemInfo            `json:"system_info"`
+	PgClusterInfo         *PgClusterInfo         `json:"pg_cluster_info"`
+	ComsumeTopSqlTotalSet *ComsumeTopSqlTotalSet `json:"comsume_top_sql_total_set"`
+	WalFileInfo           *WalFileInfo           `json:"wal_file_info"`
+	LockInfoSet           *LockInfoSet           `json:"lock_info_set"`
+	VacuumInfoSet         *VacuumInfoSet         `json:"vacuum_info_set"`
+	RoleInfoSet           *RoleInfoSet           `json:"role_info_set"`
+	BackendInfo           *BackendInfo           `json:"backend_info"`
+	TablespaceInfoSet     *TablespaceInfoSet     `json:"tablespace_info_set"`
+	DbInfoSet             *DbInfoSet             `json:"db_info_set"`
 }
 
 // AwrData结构体初始化函数
 func NewAwrData() *AwrData {
 	return &AwrData{
-		SystemInfo:          NewSystemInfo(),
-		PgClusterInfo:       NewPgClusterInfo(),
-		ComsumeIoSqlSet:     NewComsumeTopSqlSet(),
-		ComsumeTimeSqlSet:   NewComsumeTopSqlSet(),
-		ComsumeBufferSqlSet: NewComsumeTopSqlSet(),
-		ComsumeTempSqlSet:   NewComsumeTopSqlSet(),
-		WalFileInfo:         NewWalFileInfo(),
-		LockInfoSet:         NewLockInfoSet(),
-		VacuumInfoSet:       NewVacuumInfoSet(),
-		RoleInfoSet:         NewRoleInfoSet(),
-		BackendInfo:         NewBackendInfo(),
-		TablespaceInfoSet:   NewTablespaceInfoSet(),
-		DbInfoSet:           NewDbInfoSet(),
+		SystemInfo:            NewSystemInfo(),
+		PgClusterInfo:         NewPgClusterInfo(),
+		ComsumeTopSqlTotalSet: NewComsumeTopSqlTotalSet(),
+		WalFileInfo:           NewWalFileInfo(),
+		LockInfoSet:           NewLockInfoSet(),
+		VacuumInfoSet:         NewVacuumInfoSet(),
+		RoleInfoSet:           NewRoleInfoSet(),
+		BackendInfo:           NewBackendInfo(),
+		TablespaceInfoSet:     NewTablespaceInfoSet(),
+		DbInfoSet:             NewDbInfoSet(),
 	}
 }
 

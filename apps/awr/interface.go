@@ -28,15 +28,27 @@ type Service interface {
 	// 获取当前所有数据库信息
 	GetPgDbInfo(context.Context) (*DbInfoSet, error)
 	// 获取当前IO消耗TOP 10的SQL
-	GetComsumeIoSql(context.Context) (*ComsumeTopSqlSet, error)
+	GetComsumeIoSql(context.Context, *QueryTopSqlArgs) (*ComsumeTopSqlSet, error)
 	// 获取当前耗时TOP 10的SQL
-	GetComsumeTimeSql(context.Context) (*ComsumeTopSqlSet, error)
+	GetComsumeTimeSql(context.Context, *QueryTopSqlArgs) (*ComsumeTopSqlSet, error)
 	// 获取当前消耗Buffer TOP 10的SQL
-	GetComsumeBufferSql(context.Context) (*ComsumeTopSqlSet, error)
+	GetComsumeBufferSql(context.Context, *QueryTopSqlArgs) (*ComsumeTopSqlSet, error)
 	// 获取当前消耗temp空间的SQL
-	GetComsumeTempSql(context.Context) (*ComsumeTopSqlSet, error)
+	GetComsumeTempSql(context.Context, *QueryTopSqlArgs) (*ComsumeTopSqlSet, error)
+	// 获取当前各种消耗Top 10的SQL
+	GetComsumeTopSql(context.Context) (*ComsumeTopSqlTotalSet, error)
 	// 生成AWR数据
 	GenAwrData(context.Context) (*AwrData, error)
 	// 生成AWR报告
 	GenAwrReport(context.Context) error
+}
+
+// 查找Top Sql条件结构体
+type QueryTopSqlArgs struct {
+	DbName string `json:"db_name"`
+}
+
+// 查找Top Sql条件结构体初始化函数
+func NewQueryTopSqlArgs() *QueryTopSqlArgs {
+	return &QueryTopSqlArgs{}
 }
