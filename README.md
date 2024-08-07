@@ -35,4 +35,7 @@ postgresql工具
 
 # 生成重建控制文件命令
 ./pgtools rectl -u <系统用户> -w <密码> -m <数据库ip地址> -p <ssh端口号>
+
+# 生成awr报告
+./pgtools awr -U <数据库用户> -M <ip地址> -P <数据库端口号> -W <密码> -D <数据库名称>
 ```
