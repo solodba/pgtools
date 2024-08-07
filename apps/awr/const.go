@@ -429,7 +429,7 @@ const AwrTpl = `
 			{{ end }}
         </tbody>
     </table>
-	<h2 class="awr"><a class="awr" name="99999"></a>DB Extension</h2>
+	<h3 class="awr"><a class="awr" name="99999"></a>DB #{{ $index }}: {{ .Name }} extension</h3>
 	<table border="0" width="800" class="tdiff" summary="This table displays postgresql extension information">
 		<tbody>
             <tr>
