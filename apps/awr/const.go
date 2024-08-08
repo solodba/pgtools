@@ -532,13 +532,13 @@ const AwrTpl = `
 	</p>
 	{{ end }}
 	<h2 class="awr">SQL Statistics</h2>
-	{{ range $index, $item := .ComsumeTopSqlTotalSet.ComsumeTopSqlSetItems }}
-	 <ul>
-		<li class="awr"><a class="awr" href="#">SQL ordered by User I/O</a></li>
-		<li class="awr"><a class="awr" href="#">SQL ordered by Elapsed Time</a></li>
-		<li class="awr"><a class="awr" href="#">SQL ordered by Shared Buffer</a></li>
-		<li class="awr"><a class="awr" href="#">SQL ordered by Temp</a></li>
+	<ul>
+		<li class="awr"><a class="awr">SQL ordered by User I/O</a></li>
+		<li class="awr"><a class="awr">SQL ordered by Elapsed Time</a></li>
+		<li class="awr"><a class="awr">SQL ordered by Shared Buffer</a></li>
+		<li class="awr"><a class="awr">SQL ordered by Temp</a></li>
 	</ul>
+	{{ range $index, $item := .ComsumeTopSqlTotalSet.ComsumeTopSqlSetItems }}
 	<h3 class="awr">DB {{ $item.DbName }}: {{ $item.Type }}</h3>
 	{{ range $index1, $item1 := $item.ComsumeTopSqlItems }}
 	<p>
