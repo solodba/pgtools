@@ -539,7 +539,7 @@ const AwrTpl = `
 		<li class="awr"><a class="awr">SQL ordered by Temp</a></li>
 	</ul>
 	{{ range $index, $item := .ComsumeTopSqlTotalSet.ComsumeTopSqlSetItems }}
-	<h3 class="awr">DB {{ $item.DbName }}: {{ $item.Type }}</h3>
+	<h3 class="awr">DB# {{ $item.DbName }}: {{ $item.Type }}</h3>
 	{{ range $index1, $item1 := $item.ComsumeTopSqlItems }}
 	<p>
 	<table border="0" width="800" class="tdiff" summary="This table displays {{ $item.Type }}">
