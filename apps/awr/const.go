@@ -37,7 +37,7 @@ const AwrTpl = `
 	</style>
 </head>
 <body class="awr">
-	<h1 class="awr">PostgreSQL AWR</h1>
+	<h1 class="awr">PostgreSQL AWR Report</h1>
 	<h2 class="awr"><a class="awr" name="99999"></a>System Information</h2>
 	<p>
 	<table border="0" width="800" class="tdiff" summary="This table displays system information">
@@ -151,6 +151,74 @@ const AwrTpl = `
                 <th class="awrbg" scope="col">value</th>
 			</tr>
 			{{ range $index, $item := .WalFileInfo.ParamSet.ParamItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.Name }}</td>
+				<td scope="row" class="awrc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.Name }}</td>
+				<td scope="row" class="awrnc">{{ $item.Value }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>BgWriter Information</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql BgWriter information">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">Forced Checkpoint %</th>
+                <th class="awrbg" scope="col">Avg mins between CP</th>
+				<th class="awrbg" scope="col">Avg CP write time (s)</th>
+				<th class="awrbg" scope="col">Avg CP sync time (s)</th>
+				<th class="awrbg" scope="col">Tot MB Written</th>
+				<th class="awrbg" scope="col">MB per CP</th>
+				<th class="awrbg" scope="col">Checkpoint MBps</th>
+				<th class="awrbg" scope="col">Bgwriter MBps</th>
+				<th class="awrbg" scope="col">Backend MBps</th>
+				<th class="awrbg" scope="col">Total MBps</th>
+				<th class="awrbg" scope="col">New buffers ratio</th>
+				<th class="awrbg" scope="col">Clean by checkpoints (%)</th>
+				<th class="awrbg" scope="col">Clean by bgwriter (%)</th>
+				<th class="awrbg" scope="col">Clean by backends (%)</th>
+				<th class="awrbg" scope="col">Bgwriter halts (%) per runs (**1)</th>
+				<th class="awrbg" scope="col">Bgwriter halt (%) due to LRU hit (**2)</th>
+			</tr>
+            <tr>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.ForceCp }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.AvgMinCp }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.AvgCpWriteTime }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.AvgCpSyncTime }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.TotalWrite }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.MbPerCp }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.CpMbps }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.BgWriterMbps }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.BackendMbps }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.TotalMbps }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.NewBufferRatio }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.CleanByCp }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.CleanByBgWriter }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.CleanByBackend }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.BgWriterHaltsPerRuns }}</td>
+				<td scope="row" class="awrc">{{ .BgWriterInfo.BgWriterHaltDueToLruHit }}</td>
+            </tr>
+        </tbody>
+    </table>
+	</p>
+	<h2 class="awr"><a class="awr" name="99999"></a>BgWriter Prameter</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql BgWriter parameter">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">name</th>
+                <th class="awrbg" scope="col">value</th>
+			</tr>
+			{{ range $index, $item := .BgWriterInfo.ParamSet.ParamItems }}
 			{{ if eq (mod $index 2) 1 }}
             <tr>
 				<td scope="row" class="awrc">{{ $item.Name }}</td>
@@ -473,6 +541,7 @@ const AwrTpl = `
             <tr>
                 <th class="awrbg" scope="col">userid</th>
 				<th class="awrbg" scope="col">dbid</th>
+				<th class="awrbg" scope="col">queryid</th>
 				<th class="awrbg" scope="col">calls</th>
 				<th class="awrbg" scope="col">min_exec_time</th>
 				<th class="awrbg" scope="col">max_exec_time</th>
@@ -492,6 +561,7 @@ const AwrTpl = `
             <tr>
 				<td scope="row" class="awrc">{{ $item1.UserId }}</td>
 				<td scope="row" class="awrc">{{ $item1.DbId }}</td>
+				<td scope="row" class="awrc">{{ $item1.QueryId }}</td>
 				<td scope="row" class="awrc">{{ $item1.Calls }}</td>
 				<td scope="row" class="awrc">{{ $item1.MinExecTime }}</td>
 				<td scope="row" class="awrc">{{ $item1.MaxExecTime }}</td>
@@ -512,6 +582,7 @@ const AwrTpl = `
             <tr>
 				<td scope="row" class="awrnc">{{ $item1.UserId }}</td>
 				<td scope="row" class="awrnc">{{ $item1.DbId }}</td>
+				<td scope="row" class="awrnc">{{ $item1.QueryId }}</td>
 				<td scope="row" class="awrnc">{{ $item1.Calls }}</td>
 				<td scope="row" class="awrnc">{{ $item1.MinExecTime }}</td>
 				<td scope="row" class="awrnc">{{ $item1.MaxExecTime }}</td>
@@ -533,6 +604,31 @@ const AwrTpl = `
 	</p>
 	{{ end }}
 	{{ end }}
+	<h2 class="awr">Complete List of SQL Text</h2>
+	<p>
+	<table border="0" width="800" class="tdiff" summary="This table displays postgresql Complete List of SQL Text">
+        <tbody>
+            <tr>
+                <th class="awrbg" scope="col">QueryId</th>
+                <th class="awrbg" scope="col">QueryText</th>
+			</tr>
+			{{ range $index, $item := .ComsumeAllSqlSet.ComsumeAllSqlItems }}
+			{{ if eq (mod $index 2) 1 }}
+            <tr>
+				<td scope="row" class="awrc">{{ $item.QueryId }}</td>
+				<td scope="row" class="awrc">{{ $item.QueryText }}</td>
+            </tr>
+			{{ end }}
+			{{ if eq (mod $index 2) 0 }}
+            <tr>
+				<td scope="row" class="awrnc">{{ $item.QueryId }}</td>
+				<td scope="row" class="awrnc">{{ $item.QueryText }}</td>
+            </tr>
+			{{ end }}
+			{{ end }}
+        </tbody>
+    </table>
+	</p>
 </body>
 </html>
 `

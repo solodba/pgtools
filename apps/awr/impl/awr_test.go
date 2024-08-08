@@ -117,3 +117,19 @@ func TestGetPgDbInfo(t *testing.T) {
 	}
 	t.Log(tools.MustToJson(dbInfoSet))
 }
+
+func TestGetPgBgWriter(t *testing.T) {
+	bgWriterInfo, err := svc.GetPgBgWriter(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(bgWriterInfo))
+}
+
+func TestGetComsumeAllSql(t *testing.T) {
+	comsumeAllSqlSet, err := svc.GetComsumeAllSql(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(tools.MustToJson(comsumeAllSqlSet))
+}

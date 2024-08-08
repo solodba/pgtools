@@ -15,6 +15,8 @@ type Service interface {
 	GetPgClusterInfo(context.Context) (*PgClusterInfo, error)
 	// 获取当前数据库聚簇WAL Files信息
 	GetPgWalFileInfo(context.Context) (*WalFileInfo, error)
+	// 获取当前数据库Bg Writer信息
+	GetPgBgWriter(context.Context) (*BgWriterInfo, error)
 	// 获取当前所有锁信息
 	GetPgLockInfo(context.Context) (*LockInfoSet, error)
 	// 获取当前VACUUM信息
@@ -37,6 +39,8 @@ type Service interface {
 	GetComsumeTempSql(context.Context, *QueryTopSqlArgs) (*ComsumeTopSqlSet, error)
 	// 获取当前各种消耗Top 10的SQL
 	GetComsumeTopSql(context.Context) (*ComsumeTopSqlTotalSet, error)
+	// 获取所有TOP SQL集合
+	GetComsumeAllSql(context.Context) (*ComsumeAllSqlSet, error)
 	// 生成AWR数据
 	GenAwrData(context.Context) (*AwrData, error)
 	// 生成AWR报告

@@ -167,6 +167,7 @@ func (i *impl) GetComsumeIoSql(ctx context.Context, queryTopSqlArgs *awr.QueryTo
 select 
 userid::regrole,
 dbid,
+queryid,
 calls,
 min_exec_time,
 max_exec_time,
@@ -196,6 +197,7 @@ order by (blk_read_time+blk_write_time)/calls desc limit 10
 		err = rows.Scan(
 			&comsumeTopSql.UserId,
 			&comsumeTopSql.DbId,
+			&comsumeTopSql.QueryId,
 			&comsumeTopSql.Calls,
 			&comsumeTopSql.MinExecTime,
 			&comsumeTopSql.MaxExecTime,
@@ -214,7 +216,8 @@ order by (blk_read_time+blk_write_time)/calls desc limit 10
 			return nil, err
 		}
 		if len(comsumeTopSql.Query) > 60 {
-			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+			comsumeTopSql.LongQuery = comsumeTopSql.Query
+			comsumeTopSql.Query = comsumeTopSql.Query[0:21] + "..."
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
@@ -230,6 +233,7 @@ func (i *impl) GetComsumeTimeSql(ctx context.Context, queryTopSqlArgs *awr.Query
 select 
 userid::regrole,
 dbid,
+queryid,
 calls,
 min_exec_time,
 max_exec_time,
@@ -259,6 +263,7 @@ order by total_exec_time desc limit 10
 		err = rows.Scan(
 			&comsumeTopSql.UserId,
 			&comsumeTopSql.DbId,
+			&comsumeTopSql.QueryId,
 			&comsumeTopSql.Calls,
 			&comsumeTopSql.MinExecTime,
 			&comsumeTopSql.MaxExecTime,
@@ -277,7 +282,8 @@ order by total_exec_time desc limit 10
 			return nil, err
 		}
 		if len(comsumeTopSql.Query) > 60 {
-			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+			comsumeTopSql.LongQuery = comsumeTopSql.Query
+			comsumeTopSql.Query = comsumeTopSql.Query[0:21] + "..."
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
@@ -293,6 +299,7 @@ func (i *impl) GetComsumeBufferSql(ctx context.Context, queryTopSqlArgs *awr.Que
 select 
 userid::regrole,
 dbid,
+queryid,
 calls,
 min_exec_time,
 max_exec_time,
@@ -322,6 +329,7 @@ order by (shared_blks_hit+shared_blks_dirtied) desc limit 10
 		err = rows.Scan(
 			&comsumeTopSql.UserId,
 			&comsumeTopSql.DbId,
+			&comsumeTopSql.QueryId,
 			&comsumeTopSql.Calls,
 			&comsumeTopSql.MinExecTime,
 			&comsumeTopSql.MaxExecTime,
@@ -340,7 +348,8 @@ order by (shared_blks_hit+shared_blks_dirtied) desc limit 10
 			return nil, err
 		}
 		if len(comsumeTopSql.Query) > 60 {
-			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+			comsumeTopSql.LongQuery = comsumeTopSql.Query
+			comsumeTopSql.Query = comsumeTopSql.Query[0:21] + "..."
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
@@ -356,6 +365,7 @@ func (i *impl) GetComsumeTempSql(ctx context.Context, queryTopSqlArgs *awr.Query
 select 
 userid::regrole,
 dbid,
+queryid,
 calls,
 min_exec_time,
 max_exec_time,
@@ -385,6 +395,7 @@ order by temp_blks_written desc limit 10
 		err = rows.Scan(
 			&comsumeTopSql.UserId,
 			&comsumeTopSql.DbId,
+			&comsumeTopSql.QueryId,
 			&comsumeTopSql.Calls,
 			&comsumeTopSql.MinExecTime,
 			&comsumeTopSql.MaxExecTime,
@@ -403,7 +414,8 @@ order by temp_blks_written desc limit 10
 			return nil, err
 		}
 		if len(comsumeTopSql.Query) > 60 {
-			comsumeTopSql.Query = comsumeTopSql.Query[0:61] + "..."
+			comsumeTopSql.LongQuery = comsumeTopSql.Query
+			comsumeTopSql.Query = comsumeTopSql.Query[0:21] + "..."
 		}
 		comsumeTopSqlSet.AddItems(comsumeTopSql)
 	}
@@ -455,6 +467,34 @@ func (i *impl) GetComsumeTopSql(ctx context.Context) (*awr.ComsumeTopSqlTotalSet
 		comsumeTopSqlTotalSet.AddItems(comsumeIoSqlSet, comsumeTimeSqlSet, comsumeBufferSqlSet, comsumeTempSqlSet)
 	}
 	return comsumeTopSqlTotalSet, nil
+}
+
+// 获取所有TOP SQL集合
+func (i *impl) GetComsumeAllSql(ctx context.Context) (*awr.ComsumeAllSqlSet, error) {
+	comsumeTopSqlTotalSet, err := i.GetComsumeTopSql(ctx)
+	if err != nil {
+		return nil, err
+	}
+	comsumeAllSqlSet := awr.NewComsumeAllSqlSet()
+	for _, comsumeTopSqlSetItem := range comsumeTopSqlTotalSet.ComsumeTopSqlSetItems {
+		for _, comsumeTopSqlSet := range comsumeTopSqlSetItem.ComsumeTopSqlItems {
+			comsumeAllSql := awr.NewComsumeAllSql()
+			comsumeAllSql.QueryId = comsumeTopSqlSet.QueryId
+			comsumeAllSql.QueryText = comsumeTopSqlSet.LongQuery
+			comsumeAllSqlSet.AddItems(comsumeAllSql)
+		}
+	}
+	comsumeAllSqlSet.Total = len(comsumeAllSqlSet.ComsumeAllSqlItems)
+	newComsumeAllSqlSet := awr.NewComsumeAllSqlSet()
+	m := make(map[awr.ComsumeAllSql]bool)
+	for _, item := range comsumeAllSqlSet.ComsumeAllSqlItems {
+		if _, exists := m[*item]; !exists {
+			m[*item] = true
+			newComsumeAllSqlSet.ComsumeAllSqlItems = append(newComsumeAllSqlSet.ComsumeAllSqlItems, item)
+		}
+	}
+	newComsumeAllSqlSet.Total = len(newComsumeAllSqlSet.ComsumeAllSqlItems)
+	return newComsumeAllSqlSet, nil
 }
 
 // 获取当前数据库聚簇WAL Files信息
@@ -518,6 +558,81 @@ func (i *impl) GetPgWalFileInfo(ctx context.Context) (*awr.WalFileInfo, error) {
 	paramSet.Total = len(paramSet.ParamItems)
 	walFileInfo.ParamSet = paramSet
 	return walFileInfo, nil
+}
+
+// 获取当前数据库Bg Writer信息
+func (i *impl) GetPgBgWriter(ctx context.Context) (*awr.BgWriterInfo, error) {
+	sql := `
+SELECT round(checkpoints_req*100/tot_cp,1) "Forced Checkpoint %" ,
+round(min_since_reset/tot_cp,2) "Avg mins between CP",
+round(checkpoint_write_time::numeric/(tot_cp*1000),4) "Avg CP write time (s)",
+round(checkpoint_sync_time::numeric/(tot_cp*1000),4)  "Avg CP sync time (s)",
+round(total_buffers::numeric*8192/(1024*1024),2) "Tot MB Written",
+round((buffers_checkpoint::numeric/tot_cp)*8192/(1024*1024),4) "MB per CP",
+round(buffers_checkpoint::numeric*8192/(min_since_reset*60*1024*1024),4) "Checkpoint MBps",
+round(buffers_clean::numeric*8192/(min_since_reset*60*1024*1024),4) "Bgwriter MBps",
+round(buffers_backend::numeric*8192/(min_since_reset*60*1024*1024),4) "Backend MBps",
+round(total_buffers::numeric*8192/(min_since_reset*60*1024*1024),4) "Total MBps",
+round(buffers_alloc::numeric/total_buffers,3)  "New buffers ratio",
+round(100.0*buffers_checkpoint/total_buffers,1)  "Clean by checkpoints (%)",
+round(100.0*buffers_clean/total_buffers,1)   "Clean by bgwriter (%)",
+round(100.0*buffers_backend/total_buffers,1)  "Clean by backends (%)",
+round(100.0*maxwritten_clean/(min_since_reset*60000 / delay.setting::numeric),2)   "Bgwriter halts (%) per runs (**1)",
+coalesce(round(100.0*maxwritten_clean/(nullif(buffers_clean,0)/ lru.setting::numeric),2),0)  "Bgwriter halt (%) due to LRU hit (**2)"
+FROM pg_stat_bgwriter
+CROSS JOIN 
+(SELECT 
+    NULLIF(round(extract('epoch' from now() - stats_reset)/60)::numeric,0) min_since_reset,
+    GREATEST(buffers_checkpoint + buffers_clean + buffers_backend,1) total_buffers,
+    NULLIF(checkpoints_timed+checkpoints_req,0) tot_cp 
+    FROM pg_stat_bgwriter) AS bg
+LEFT JOIN pg_settings delay ON delay.name = 'bgwriter_delay'
+LEFT JOIN pg_settings lru ON lru.name = 'bgwriter_lru_maxpages'`
+	bgWriterInfo := awr.NewBgWriterInfo()
+	row := i.db.QueryRowContext(ctx, sql)
+	err := row.Scan(
+		&bgWriterInfo.ForceCp,
+		&bgWriterInfo.AvgMinCp,
+		&bgWriterInfo.AvgCpWriteTime,
+		&bgWriterInfo.AvgCpSyncTime,
+		&bgWriterInfo.TotalWrite,
+		&bgWriterInfo.MbPerCp,
+		&bgWriterInfo.CpMbps,
+		&bgWriterInfo.BgWriterMbps,
+		&bgWriterInfo.BackendMbps,
+		&bgWriterInfo.TotalMbps,
+		&bgWriterInfo.NewBufferRatio,
+		&bgWriterInfo.CleanByCp,
+		&bgWriterInfo.CleanByBgWriter,
+		&bgWriterInfo.CleanByBackend,
+		&bgWriterInfo.BgWriterHaltsPerRuns,
+		&bgWriterInfo.BgWriterHaltDueToLruHit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	args := []string{"bgwriter_delay",
+		"bgwriter_flush_after",
+		"bgwriter_lru_maxpages",
+		"bgwriter_lru_multiplier",
+		"block_size",
+		"checkpoint_timeout",
+		"checkpoint_completion_target",
+	}
+	paramSet := awr.NewParamSet()
+	for _, arg := range args {
+		param := awr.NewParam()
+		row = i.db.QueryRowContext(ctx, "select setting from pg_settings where name=$1", arg)
+		err = row.Scan(&param.Value)
+		if err != nil {
+			return nil, err
+		}
+		param.Name = arg
+		paramSet.AddItems(param)
+	}
+	paramSet.Total = len(paramSet.ParamItems)
+	bgWriterInfo.ParamSet = paramSet
+	return bgWriterInfo, nil
 }
 
 // 获取当前所有锁信息
@@ -868,6 +983,10 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	comsumeAllSqlSet, err := i.GetComsumeAllSql(ctx)
+	if err != nil {
+		return nil, err
+	}
 	walFileInfo, err := i.GetPgWalFileInfo(ctx)
 	if err != nil {
 		return nil, err
@@ -896,10 +1015,15 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	if err != nil {
 		return nil, err
 	}
+	bgWriterInfo, err := i.GetPgBgWriter(ctx)
+	if err != nil {
+		return nil, err
+	}
 	awrData := awr.NewAwrData()
 	awrData.SystemInfo = systemInfo
 	awrData.PgClusterInfo = pgClusterInfo
 	awrData.ComsumeTopSqlTotalSet = comsumeTopSqlTotalSet
+	awrData.ComsumeAllSqlSet = comsumeAllSqlSet
 	awrData.WalFileInfo = walFileInfo
 	awrData.LockInfoSet = lockInfoSet
 	awrData.VacuumInfoSet = vaccumInfoSet
@@ -907,6 +1031,7 @@ func (i *impl) GenAwrData(ctx context.Context) (*awr.AwrData, error) {
 	awrData.BackendInfo = backendInfo
 	awrData.TablespaceInfoSet = tablespaceInfoSet
 	awrData.DbInfoSet = dbInfoSet
+	awrData.BgWriterInfo = bgWriterInfo
 	return awrData, nil
 }
 

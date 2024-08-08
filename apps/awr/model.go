@@ -85,6 +85,7 @@ func NewPgClusterInfo() *PgClusterInfo {
 type ComsumeTopSql struct {
 	UserId            string `json:"user_id"`
 	DbId              string `json:"db_id"`
+	QueryId           string `json:"query_id"`
 	Calls             string `json:"calls"`
 	MinExecTime       string `json:"min_exec_time"`
 	MaxExecTime       string `json:"max_exec_time"`
@@ -99,6 +100,7 @@ type ComsumeTopSql struct {
 	BlkReadTime       string `json:"blk_read_time"`
 	BlkWriteTime      string `json:"blk_write_time"`
 	Query             string `json:"query"`
+	LongQuery         string `json:"long_query"`
 }
 
 // ComsumeTopSqlSet结构体
@@ -143,6 +145,35 @@ func (c *ComsumeTopSqlTotalSet) AddItems(items ...*ComsumeTopSqlSet) {
 	c.ComsumeTopSqlSetItems = append(c.ComsumeTopSqlSetItems, items...)
 }
 
+// ComsumeAllSqlSet结构体
+type ComsumeAllSqlSet struct {
+	Total              int              `json:"total"`
+	ComsumeAllSqlItems []*ComsumeAllSql `json:"comsume_all_sql"`
+}
+
+// ComsumeAllSql结构体
+type ComsumeAllSql struct {
+	QueryId   string `json:"query_id"`
+	QueryText string `json:"query_text"`
+}
+
+// ComsumeAllSql结构体构造函数
+func NewComsumeAllSql() *ComsumeAllSql {
+	return &ComsumeAllSql{}
+}
+
+// ComsumeAllSqlSet结构体构造函数
+func NewComsumeAllSqlSet() *ComsumeAllSqlSet {
+	return &ComsumeAllSqlSet{
+		ComsumeAllSqlItems: make([]*ComsumeAllSql, 0),
+	}
+}
+
+// ComsumeAllSqlSet结构体添加方法
+func (c *ComsumeAllSqlSet) AddItems(items ...*ComsumeAllSql) {
+	c.ComsumeAllSqlItems = append(c.ComsumeAllSqlItems, items...)
+}
+
 // WalFileInfo结构体
 type WalFileInfo struct {
 	// 是否开启归档
@@ -168,6 +199,51 @@ type WalFileInfo struct {
 // WalFileInfo结构体构造函数
 func NewWalFileInfo() *WalFileInfo {
 	return &WalFileInfo{
+		ParamSet: NewParamSet(),
+	}
+}
+
+// BgWriterInfo结构体
+type BgWriterInfo struct {
+	// 强制执行checkpoint的百分比
+	ForceCp string `json:"force_cp"`
+	// 两次检查点中间的平均时间间隔(分钟)
+	AvgMinCp string `json:"avg_min_cp"`
+	// 平均checkpoint写入时间(秒)
+	AvgCpWriteTime string `json:"avg_cp_write_time"`
+	// 平均checkpoint检查点执行sync同步时间（秒）
+	AvgCpSyncTime string `json:"avg_cp_sync_time"`
+	// 总写入的数据量（MB）
+	TotalWrite string `json:"total_write"`
+	// 每个checkpoint检查点写入脏块的平均数据量（MB）
+	MbPerCp string `json:"mb_per_cp"`
+	// checkpoint检查点每秒写入脏块的速率（MBps）
+	CpMbps string `json:"cp_mbps"`
+	// bgwriter后台写每秒的写入块的速率（MBps）
+	BgWriterMbps string `json:"bg_writer_mbps"`
+	// 后端进程每秒写入速率（MBps）
+	BackendMbps string `json:"backend_mbps"`
+	//  每秒总写入速率（MBps）
+	TotalMbps string `json:"total_mbps"`
+	//  新分配的缓冲区比例
+	NewBufferRatio string `json:"new_buffer_ratio"`
+	// 由检查点清理的缓冲区百分比
+	CleanByCp string `json:"clean_by_cp"`
+	// 由后台写入器清理的缓冲区百分比
+	CleanByBgWriter string `json:"clean_by_bg_writer"`
+	// 由后端进程清理的缓冲区百分比
+	CleanByBackend string `json:"clean_by_backend"`
+	//  bgwriter后台暂停的百分比
+	BgWriterHaltsPerRuns string `json:"bg_writer_halts_per_runs"`
+	// bgwriter后台由于LRU命中导致暂停的百分比
+	BgWriterHaltDueToLruHit string `json:"bg_writer_halt_due_to_lru_hit"`
+	// BgWriter相关参数集合
+	ParamSet *ParamSet `json:"param_set"`
+}
+
+// BgWriterInfo结构体构造函数
+func NewBgWriterInfo() *BgWriterInfo {
+	return &BgWriterInfo{
 		ParamSet: NewParamSet(),
 	}
 }
@@ -403,6 +479,7 @@ type AwrData struct {
 	SystemInfo            *SystemInfo            `json:"system_info"`
 	PgClusterInfo         *PgClusterInfo         `json:"pg_cluster_info"`
 	ComsumeTopSqlTotalSet *ComsumeTopSqlTotalSet `json:"comsume_top_sql_total_set"`
+	ComsumeAllSqlSet      *ComsumeAllSqlSet      `json:"comsume_all_sql_set"`
 	WalFileInfo           *WalFileInfo           `json:"wal_file_info"`
 	LockInfoSet           *LockInfoSet           `json:"lock_info_set"`
 	VacuumInfoSet         *VacuumInfoSet         `json:"vacuum_info_set"`
@@ -410,6 +487,7 @@ type AwrData struct {
 	BackendInfo           *BackendInfo           `json:"backend_info"`
 	TablespaceInfoSet     *TablespaceInfoSet     `json:"tablespace_info_set"`
 	DbInfoSet             *DbInfoSet             `json:"db_info_set"`
+	BgWriterInfo          *BgWriterInfo          `json:"bg_writer_info"`
 }
 
 // AwrData结构体初始化函数
@@ -418,6 +496,7 @@ func NewAwrData() *AwrData {
 		SystemInfo:            NewSystemInfo(),
 		PgClusterInfo:         NewPgClusterInfo(),
 		ComsumeTopSqlTotalSet: NewComsumeTopSqlTotalSet(),
+		ComsumeAllSqlSet:      NewComsumeAllSqlSet(),
 		WalFileInfo:           NewWalFileInfo(),
 		LockInfoSet:           NewLockInfoSet(),
 		VacuumInfoSet:         NewVacuumInfoSet(),
@@ -425,6 +504,7 @@ func NewAwrData() *AwrData {
 		BackendInfo:           NewBackendInfo(),
 		TablespaceInfoSet:     NewTablespaceInfoSet(),
 		DbInfoSet:             NewDbInfoSet(),
+		BgWriterInfo:          NewBgWriterInfo(),
 	}
 }
 
